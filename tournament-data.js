@@ -85,16 +85,16 @@ const TOURNAMENT_DATA = {
         p1: "Anirban Guha",
         p2: "Robert Gupta",
 
-        score1: null,
-        score2: null,
+        score1: 0,
+        score2: 0,
 
-        winner: null,
+        winner: "Anirban Guha",
 
-        penalties: false,
+        penalties: True,
         penWinner: null,
 
-        penaltyScore1: null,
-        penaltyScore2: null,
+        penaltyScore1: 4,
+        penaltyScore2: 3,
 
         bo3: false,
         games: []
