@@ -3,1422 +3,574 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIFA Knockout Tracker</title>
-
+<title>FIFA 26 Tournament Bracket</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap');
-
-  :root{
-    --pitch-black:#081813;
-    --pitch:#0B241B;
-    --card:#102B21;
-    --card-2:#143528;
-    --line:#1E4735;
-    --grass:#2FA36B;
-    --grass-dim:#1F7A4D;
-    --cream:#F1E9D5;
-    --muted:#8AA398;
-    --yellow:#E7C75A;
-    --red:#D95C5C;
-  }
-
-  *{
-    box-sizing:border-box;
-  }
-
-  body{
-    margin:0;
-    background:
-      radial-gradient(circle at top left,rgba(47,163,107,.08),transparent 30%),
-      var(--pitch-black);
-    color:var(--cream);
-    font-family:Inter,Arial,sans-serif;
-    min-height:100vh;
-  }
-
-  .wrap{
-    width:min(1500px,96vw);
-    margin:auto;
-    padding:28px 0 60px;
-  }
-
-  header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:20px;
-    border-bottom:1px solid var(--line);
-    padding-bottom:22px;
-    margin-bottom:24px;
-  }
-
-  .eyebrow{
-    font:11px 'Space Mono',monospace;
-    letter-spacing:2px;
-    color:var(--grass);
-    text-transform:uppercase;
-    margin-bottom:8px;
-  }
-
-  h1{
-    margin:0;
-    font-family:'Archivo Black',sans-serif;
-    font-size:clamp(30px,5vw,58px);
-    line-height:.95;
-    letter-spacing:-2px;
-  }
-
-  .subtitle{
-    color:var(--muted);
-    font:12px 'Space Mono',monospace;
-    margin-top:10px;
-  }
-
-  .status{
-    text-align:right;
-    font:11px 'Space Mono',monospace;
-    color:var(--muted);
-  }
-
-  .status strong{
-    display:block;
-    color:var(--grass);
-    font-size:16px;
-    margin-top:4px;
-  }
-
-  .toolbar{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:18px;
-  }
-
-  button,
-  select,
-  input{
-    font:12px 'Space Mono',monospace;
-  }
-
-  button{
-    border:1px solid var(--line);
-    background:var(--card);
-    color:var(--cream);
-    padding:9px 12px;
-    border-radius:5px;
-    cursor:pointer;
-  }
-
-  button:hover{
-    background:var(--card-2);
-    border-color:var(--grass-dim);
-  }
-
-  input,
-  select{
-    background:#07130F;
-    color:var(--cream);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:7px 8px;
-  }
-
-  .section-title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:30px 0 12px;
-  }
-
-  .section-title h2{
-    font:16px 'Archivo Black',sans-serif;
-    margin:0;
-  }
-
-  .section-title span{
-    font:10px 'Space Mono',monospace;
-    color:var(--muted);
-  }
-
-  .bracket{
-    overflow-x:auto;
-    padding-bottom:15px;
-  }
-
-  .rounds{
-    display:grid;
-    grid-template-columns:
-      repeat(6,minmax(210px,1fr));
-    gap:12px;
-    min-width:1280px;
-  }
-
-  .round{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
-
-  .round-head{
-    font:11px 'Space Mono',monospace;
-    color:var(--grass);
-    text-transform:uppercase;
-    letter-spacing:1px;
-    padding:8px 10px;
-    border-bottom:1px solid var(--line);
-  }
-
-  .match{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:6px;
-    overflow:hidden;
-    box-shadow:0 8px 24px rgba(0,0,0,.16);
-  }
-
-  .match-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:7px 9px;
-    background:rgba(0,0,0,.13);
-    border-bottom:1px solid var(--line);
-  }
-
-  .match-label{
-    font:9px 'Space Mono',monospace;
-    color:var(--muted);
-    text-transform:uppercase;
-  }
-
-  .match-status{
-    font:9px 'Space Mono',monospace;
-    color:var(--yellow);
-  }
-
-  .team{
-    display:grid;
-    grid-template-columns:1fr 34px;
-    align-items:center;
-    gap:8px;
-    padding:9px;
-    border-bottom:1px solid rgba(30,71,53,.5);
-  }
-
-  .team:last-child{
-    border-bottom:0;
-  }
-
-  .team-name{
-    font-size:12px;
-    font-weight:600;
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-
-  .team-name.winner{
-    color:var(--grass);
-  }
-
-  .score{
-    text-align:center;
-    font:700 15px 'Space Mono',monospace;
-  }
-
-  .score-box{
-    width:34px;
-    text-align:center;
-    padding:6px 2px;
-  }
-
-  .pen-note{
-    padding:7px 9px;
-    color:var(--yellow);
-    font:9px 'Space Mono',monospace;
-    border-top:1px solid var(--line);
-  }
-
-  .games{
-    padding:8px 9px;
-    border-top:1px solid var(--line);
-  }
-
-  .game{
-    font:9px 'Space Mono',monospace;
-    color:var(--muted);
-    padding:3px 0;
-  }
-
-  .champion{
-    margin-top:26px;
-    border:1px solid var(--grass);
-    background:linear-gradient(135deg,rgba(47,163,107,.13),rgba(47,163,107,.02));
-    border-radius:7px;
-    padding:22px;
-    text-align:center;
-  }
-
-  .champion .label{
-    font:10px 'Space Mono',monospace;
-    color:var(--grass);
-    letter-spacing:2px;
-  }
-
-  .champion .name{
-    margin-top:8px;
-    font:30px 'Archivo Black',sans-serif;
-  }
-
-  .roster-panel{
-    margin-top:30px;
-    border:1px solid var(--line);
-    background:var(--card);
-    border-radius:7px;
-    padding:18px;
-  }
-
-  .roster-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-    gap:7px;
-  }
-
-  .roster-player{
-    padding:8px 10px;
-    border:1px solid var(--line);
-    border-radius:4px;
-    font:11px 'Space Mono',monospace;
-    color:var(--muted);
-  }
-
-  .empty{
-    padding:20px;
-    border:1px dashed var(--line);
-    color:var(--muted);
-    font:11px 'Space Mono',monospace;
-    text-align:center;
-  }
-
-  .readonly-banner{
-    position:fixed;
-    bottom:12px;
-    right:12px;
-    z-index:9999;
-    background:#102B21;
-    border:1px solid #1E4735;
-    color:#8AA398;
-    padding:8px 12px;
-    border-radius:6px;
-    font:11px 'Space Mono',monospace;
-    box-shadow:0 4px 18px rgba(0,0,0,.25);
-  }
-
-  /*
-   * PUBLIC PAGE = READ ONLY
-   */
-
-  body.public-viewer input,
-  body.public-viewer select,
-  body.public-viewer button{
-    pointer-events:none;
-    opacity:.65;
-  }
-
-  body.public-viewer .toolbar,
-  body.public-viewer .roster-panel,
-  body.public-viewer .match-actions{
-    display:none;
-  }
-
-  body.public-viewer .score-box{
-    pointer-events:none;
-    border-color:var(--line);
-  }
-
-  @media(max-width:640px){
-
-    .wrap{
-      width:94vw;
-      padding-top:18px;
-    }
-
-    header{
-      align-items:flex-start;
-      flex-direction:column;
-    }
-
-    .status{
-      text-align:left;
-    }
-
-    h1{
-      font-size:38px;
-    }
-
-    .readonly-banner{
-      font-size:9px;
-      bottom:8px;
-      right:8px;
-    }
-  }
+:root{
+  --bg:#061b14;
+  --panel:#0b2b21;
+  --panel2:#0e3428;
+  --line:#174c3a;
+  --text:#e6f4ed;
+  --muted:#8caea1;
+  --accent:#2cc77c;
+  --accent2:#d8a934;
+  --danger:#d95757;
+  --shadow:0 8px 24px rgba(0,0,0,.22);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{
+  position:sticky;top:0;z-index:20;
+  background:#071f18;
+  border-bottom:1px solid var(--line);
+  padding:12px 18px;
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+}
+.title-wrap h1{margin:0;font-size:18px;letter-spacing:.4px}
+.title-wrap p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line);
+  background:#0d3328;color:var(--text);
+  padding:8px 12px;border-radius:6px;
+}
+.btn:hover{background:#124332}
+.btn.primary{background:#168957;border-color:#20a967}
+.btn.warn{background:#5b4a1c;border-color:#846b25}
+.btn.danger{background:#572525;border-color:#7d3535}
+.btn.small{padding:5px 8px;font-size:11px}
+.info{
+  max-width:1500px;margin:12px auto 0;padding:0 18px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.badge{
+  border:1px solid var(--line);background:#09251c;
+  color:var(--muted);padding:6px 9px;border-radius:5px;font-size:11px
+}
+.badge strong{color:var(--text)}
+#bracket{
+  width:max-content;min-width:100%;
+  padding:18px;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(230px,1fr));
+  gap:28px;
+  align-items:start;
+}
+.stage h2{
+  margin:0 0 10px;text-align:center;
+  font-size:11px;letter-spacing:1.2px;color:#45c98a
+}
+.stage-list{display:flex;flex-direction:column}
+.match{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:7px;
+  padding:8px;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.match + .match{margin-top:16px}
+.match .time{
+  font-size:10px;color:var(--accent2);font-weight:bold;margin-bottom:6px
+}
+.player{
+  display:flex;align-items:center;gap:7px;
+  min-height:25px;border-bottom:1px solid #153f31;
+  padding:3px 2px;font-size:11px;
+}
+.player:last-of-type{border-bottom:0}
+.player .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roll{color:#71998b;font-size:9px;margin-left:3px}
+.score{
+  min-width:25px;text-align:center;font-weight:bold;
+  background:#082119;border-radius:3px;padding:3px 4px
+}
+.player.winner{color:#fff;font-weight:bold}
+.player.winner .score{background:#175b40}
+.player.loser{opacity:.58}
+.bye{color:#45c98a;font-size:10px;font-weight:bold}
+.match-foot{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:7px;min-height:20px
+}
+.status{font-size:9px;color:var(--muted)}
+.result-btn{
+  border:0;background:#116d46;color:white;padding:5px 7px;border-radius:4px;font-size:10px
+}
+.result-btn:hover{background:#168957}
+.empty{color:#5d8074;font-style:italic}
+.stage.prelim .match{min-height:105px}
+.stage.r16 .match{margin-top:30px}
+.stage.qf .match{margin-top:104px}
+.stage.sf .match{margin-top:255px}
+.stage.final .match{margin-top:510px}
+.stage.r16 .match + .match{margin-top:30px}
+.stage.qf .match + .match{margin-top:155px}
+.stage.sf .match + .match{margin-top:470px}
+.stage.final .match + .match{margin-top:0}
+.note{
+  max-width:1500px;margin:0 auto 20px;padding:0 18px;color:var(--muted);font-size:11px
+}
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;
+  display:none;align-items:center;justify-content:center;padding:18px
+}
+.overlay.show{display:flex}
+.modal{
+  width:min(760px,100%);max-height:90vh;overflow:auto;
+  background:#09251c;border:1px solid var(--line);border-radius:9px;
+  padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.5)
+}
+.modal h3{margin:0 0 14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+.field input,.field select{
+  width:100%;background:#061b14;color:var(--text);
+  border:1px solid var(--line);border-radius:5px;padding:8px
+}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+.edit-panel{
+  max-width:1500px;margin:12px auto;padding:0 18px;
+  display:none
+}
+.edit-panel.show{display:block}
+.edit-box{
+  background:#09251c;border:1px solid var(--line);border-radius:8px;padding:14px
+}
+.edit-box h3{margin:0 0 10px;font-size:13px}
+.edit-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:10px
+}
+.edit-match{
+  border:1px solid var(--line);background:#071f18;border-radius:6px;padding:9px
+}
+.edit-match .stage-label{font-size:9px;color:#45c98a;text-transform:uppercase;margin-bottom:6px}
+.edit-match label{font-size:9px;color:var(--muted);display:block;margin:4px 0}
+.edit-match select{
+  width:100%;background:#061b14;color:var(--text);border:1px solid var(--line);
+  padding:6px;border-radius:4px
+}
+.settings{
+  display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:10px;margin-bottom:12px
+}
+.settings input{width:100%}
+.player-pool{
+  margin-top:12px;border-top:1px solid var(--line);padding-top:10px;
+  color:var(--muted);font-size:11px
+}
+.pool-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.pool-item{padding:5px 7px;background:#0d3328;border:1px solid var(--line);border-radius:4px}
+@media(max-width:1000px){
+  .topbar{position:static}
+  #bracket{grid-template-columns:repeat(5,250px);overflow-x:auto}
+  .edit-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
+<body>
 
-<body class="public-viewer">
-
-<!--
-  IMPORTANT:
-  tournament-data.js MUST be in the same folder as this index.html.
--->
-<script src="tournament-data.js"></script>
-
-<div class="wrap">
-
-  <header>
-
-    <div>
-      <div class="eyebrow">
-        FIFA · KNOCKOUT
-      </div>
-
-      <h1>
-        TOURNAMENT<br>
-        TRACKER
-      </h1>
-
-      <div class="subtitle">
-        PUBLIC TOURNAMENT VIEW
-      </div>
-    </div>
-
-    <div class="status">
-      STATUS
-      <strong>LIVE</strong>
-      PUBLIC VIEW · READ ONLY
-    </div>
-
-  </header>
-
-
-  <div class="toolbar">
-    <button id="refreshBtn">
-      REFRESH
-    </button>
+<header class="topbar">
+  <div class="title-wrap">
+    <h1>FIFA 26 Tournament</h1>
+    <p>Single match • 6 minutes each half • Draws go to penalties • No Best of 3</p>
   </div>
+  <div class="actions">
+    <button class="btn" id="editBtn">Edit Brackets</button>
+    <button class="btn danger" id="resetBtn">Reset Tournament</button>
+  </div>
+</header>
 
-
-  <div id="app"></div>
-
+<div class="info">
+  <div class="badge">Start: <strong id="startBadge">07:30</strong></div>
+  <div class="badge">Match length: <strong id="durationBadge">12 min</strong></div>
+  <div class="badge">Draw: <strong>Penalty shootout</strong></div>
+  <div class="badge">Default rule: <strong>26-only matches first</strong></div>
 </div>
 
+<section class="edit-panel" id="editPanel">
+  <div class="edit-box">
+    <h3>Manual bracket setup</h3>
+    <div class="settings">
+      <div class="field">
+        <label>Starting time</label>
+        <input id="startTime" type="time" value="07:30">
+      </div>
+      <div class="field">
+        <label>Minutes per half</label>
+        <input id="halfMinutes" type="number" min="1" max="30" value="6">
+      </div>
+      <div class="field">
+        <label>Extra gap between matches (minutes)</label>
+        <input id="gapMinutes" type="number" min="0" max="60" value="0">
+      </div>
+    </div>
+    <div class="edit-grid" id="editGrid"></div>
+    <div class="player-pool">
+      <strong>Player pool</strong> — Rehan Malik has no roll number in the supplied list and is kept available for manual placement.
+      <div class="pool-list" id="playerPool"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="cancelEdit">Cancel</button>
+      <button class="btn primary" id="saveEdit">Save Brackets & Timings</button>
+    </div>
+  </div>
+</section>
 
-<div class="readonly-banner">
-  PUBLIC VIEW · READ ONLY
+<main id="bracket"></main>
+<div class="note">
+  Default layout follows the supplied image. Nima is paired with Arush; Varun is a bye. You can move any player into any bracket slot from <b>Edit Brackets</b>.
 </div>
 
+<div class="overlay" id="resultOverlay">
+  <div class="modal">
+    <h3 id="resultTitle">Enter Result</h3>
+    <div class="form-grid">
+      <div class="field"><label id="p1Label">Player 1</label><input id="score1" type="number" min="0" value="0"></div>
+      <div class="field"><label id="p2Label">Player 2</label><input id="score2" type="number" min="0" value="0"></div>
+    </div>
+    <div class="field" id="penaltyField" style="display:none;margin-top:10px">
+      <label>Penalty winner</label>
+      <select id="penaltyWinner"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="closeResult">Cancel</button>
+      <button class="btn primary" id="saveResult">Save Result</button>
+    </div>
+  </div>
+</div>
 
 <script>
-
-/*
- * ============================================================
- * FIFA KNOCKOUT TRACKER
- *
- * Tournament data comes ONLY from:
- *
- *      tournament-data.js
- *
- * There is deliberately NO localStorage here.
- *
- * To update the tournament:
- *
- *      GitHub
- *          ↓
- *      edit tournament-data.js
- *          ↓
- *      commit
- *          ↓
- *      GitHub Pages deploy
- *          ↓
- *      public page updates
- *
- * ============================================================
- */
-
-
-let state = {
-
-  players: Array.isArray(TOURNAMENT_DATA.players)
-    ? [...TOURNAMENT_DATA.players]
-    : [],
-
-  bracket: TOURNAMENT_DATA.bracket
-    ? structuredClone(TOURNAMENT_DATA.bracket)
-    : null
-
-};
-
-
-/*
- * ------------------------------------------------------------
- * CONSTANTS
- * ------------------------------------------------------------
- */
-
-const ROUND_ORDER = [
-  "prelim",
-  "r16",
-  "qf",
-  "sf",
-  "final"
+const PLAYERS = [
+  ["Prakul Mishra","MBATM25025"],
+  ["Tushar Singh","MBA25181"],
+  ["Shubham Kashyap","MBA25140"],
+  ["Adhyan Kumar","MBA25231"],
+  ["Aryaman Singh","MBA25059"],
+  ["Nima","MBA25075"],
+  ["Robert Gupta","MBA25083"],
+  ["PARIMAL MISHRA","MBA25171"],
+  ["Anirban Guha","MBA26008"],
+  ["Rieshi Rao","MBA26049"],
+  ["Shubh Wadhwa","MBA26120"],
+  ["Karanbir Singh Dhoul","MBA26158"],
+  ["Abhilash Naskar","MBA26004"],
+  ["Siddhant Singh","MBA25180"],
+  ["Kush Soni","MBA25119"],
+  ["Jay Mishra","MBATm26037"],
+  ["Hemant Agrawal","MBA25188"],
+  ["Varun Rathi","MBA25230"],
+  ["kartikay sharma","mbatm26016"],
+  ["Meet Gowsawmi","25001"],
+  ["Rehan Malik",""],
+  ["Chaitanya Wankhande","25002"],
+  ["RajVardhan","25003"],
+  ["Hodor","25004"],
+  ["Arush","25005"]
 ];
 
+const byName = Object.fromEntries(PLAYERS.map(p => [p[0], {name:p[0], roll:p[1]}]));
+
+const stages = [
+  {id:"prelim", label:"PRELIMINARY", count:8},
+  {id:"r16", label:"ROUND OF 16", count:8},
+  {id:"qf", label:"QUARTERFINALS", count:4},
+  {id:"sf", label:"SEMIFINALS", count:2},
+  {id:"final", label:"FINAL", count:1}
+];
+
+function makeMatch(id, stage, a=null, b=null, nextMatch=null, nextSlot=null, bye=false){
+  return {
+    id, stage, p1:a, p2:b, score1:null, score2:null, penalties:null,
+    winner:null, nextMatch, nextSlot, bye, time:null, played:false
+  };
+}
 
 /*
- * ------------------------------------------------------------
- * HELPERS
- * ------------------------------------------------------------
- */
+  The image has 7 preliminary games feeding 7 seeded Round-of-16 games.
+  The requested Nima vs Arush game is added as an eighth preliminary game.
+  Varun is a bye, exactly as requested.
+*/
+const DEFAULT_MATCHES = [
+  makeMatch("p1","prelim","Anirban Guha","Robert Gupta","r1",1),
+  makeMatch("p2","prelim","Prakul Mishra","RajVardhan","r2",1),
+  makeMatch("p3","prelim","Abhilash Naskar","Hodor","r3",1),
+  makeMatch("p4","prelim","Karanbir Singh Dhoul","Rieshi Rao","r4",1),
+  makeMatch("p5","prelim","Meet Gowsawmi","Adhyan Kumar","r5",1),
+  makeMatch("p6","prelim","Chaitanya Wankhande","Shubh Wadhwa","r6",1),
+  makeMatch("p7","prelim","Jay Mishra","kartikay sharma","r7",1),
+  makeMatch("p8","prelim","Nima","Arush",null,null),
 
-function el(tag, attrs, children){
+  makeMatch("r1","r16","Kush Soni",null,"q1",0),
+  makeMatch("r2","r16","PARIMAL MISHRA",null,"q1",1),
+  makeMatch("r3","r16","Siddhant Singh",null,"q2",0),
+  makeMatch("r4","r16","Tushar Singh",null,"q2",1),
+  makeMatch("r5","r16","Aryaman Singh",null,"q3",0),
+  makeMatch("r6","r16","Hemant Agrawal",null,"q3",1),
+  makeMatch("r7","r16","Shubham Kashyap",null,"q4",0),
+  makeMatch("r8","r16","Varun Rathi",null,"q4",1,true),
 
-  const node = document.createElement(tag);
+  makeMatch("q1","qf",null,null,"s1",0),
+  makeMatch("q2","qf",null,null,"s1",1),
+  makeMatch("q3","qf",null,null,"s2",0),
+  makeMatch("q4","qf",null,null,"s2",1),
+  makeMatch("s1","sf",null,null,"f1",0),
+  makeMatch("s2","sf",null,null,"f1",1),
+  makeMatch("f1","final",null,null,null,null)
+];
 
-  if(attrs){
+let matches = loadState();
+let settings = loadSettings();
+let editSnapshot = null;
+let resultMatchId = null;
 
-    Object.entries(attrs).forEach(([key,value]) => {
+function clone(x){ return JSON.parse(JSON.stringify(x)); }
 
-      if(key === "class"){
-        node.className = value;
-      }
-      else if(key === "text"){
-        node.textContent = value;
-      }
-      else{
-        node.setAttribute(key,value);
-      }
-
-    });
-
-  }
-
-  if(children){
-
-    children.forEach(child => {
-
-      if(child !== null && child !== undefined){
-        node.appendChild(
-          typeof child === "string"
-            ? document.createTextNode(child)
-            : child
-        );
-      }
-
-    });
-
-  }
-
-  return node;
+function loadState(){
+  const saved = localStorage.getItem("fifa26TournamentMatches");
+  return saved ? JSON.parse(saved) : clone(DEFAULT_MATCHES);
+}
+function loadSettings(){
+  const saved = localStorage.getItem("fifa26TournamentSettings");
+  return saved ? JSON.parse(saved) : {startTime:"07:30", halfMinutes:6, gapMinutes:0};
+}
+function saveState(){
+  localStorage.setItem("fifa26TournamentMatches", JSON.stringify(matches));
+  localStorage.setItem("fifa26TournamentSettings", JSON.stringify(settings));
+}
+function player(name){
+  return name ? byName[name] : null;
+}
+function displayPlayer(name){
+  if(!name) return '<span class="empty">TBD</span>';
+  const p=player(name);
+  return `<span class="name">${escapeHtml(p?.name || name)} ${p?.roll ? `<span class="roll">${escapeHtml(p.roll)}</span>`:""}</span>`;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+function minutesFromTime(t){
+  const [h,m]=t.split(":").map(Number);
+  return h*60+m;
+}
+function timeString(total){
+  total=(total+1440)%1440;
+  const h=Math.floor(total/60), m=total%60;
+  return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
 }
 
-
-function txt(value){
-  return document.createTextNode(
-    value === null || value === undefined
-      ? ""
-      : String(value)
-  );
-}
-
-
-/*
- * ------------------------------------------------------------
- * MATCH HELPERS
- * ------------------------------------------------------------
- */
-
-function getWinner(match){
-
-  if(!match){
-    return null;
-  }
-
-  if(match.winner){
-    return match.winner;
-  }
-
-  if(match.penWinner){
-    return match.penWinner;
-  }
-
-  return null;
-}
-
-
-function getLoser(match){
-
-  if(!match){
-    return null;
-  }
-
-  const winner = getWinner(match);
-
-  if(!winner){
-    return null;
-  }
-
-  const p1 = match.p1eff || match.p1;
-  const p2 = match.p2eff || match.p2;
-
-  if(winner === p1){
-    return p2;
-  }
-
-  if(winner === p2){
-    return p1;
-  }
-
-  return null;
-}
-
-
-function resolveRef(bracket, ref){
-
-  if(!ref){
-    return null;
-  }
-
-  const round = bracket[ref.round];
-
-  if(!round){
-    return null;
-  }
-
-  const match = round[ref.idx];
-
-  if(!match){
-    return null;
-  }
-
-  if(ref.loser){
-    return getLoser(match);
-  }
-
-  return getWinner(match);
-}
-
-
-function resolvePlayer(bracket, match, key, refKey){
-
-  if(match[key]){
-    return match[key];
-  }
-
-  if(match[refKey]){
-    return resolveRef(bracket,match[refKey]);
-  }
-
-  return null;
-}
-
-
-function annotate(bracket){
-
-  if(!bracket){
-    return bracket;
-  }
-
-  const rounds = [
-    "prelim",
-    "r16",
-    "qf",
-    "sf",
-    "final",
-    "third"
-  ];
-
-  rounds.forEach(roundName => {
-
-    if(!bracket[roundName]){
-      return;
-    }
-
-    bracket[roundName].forEach(match => {
-
-      match.p1eff = resolvePlayer(
-        bracket,
-        match,
-        "p1",
-        "ref1"
-      );
-
-      match.p2eff = resolvePlayer(
-        bracket,
-        match,
-        "p2",
-        "ref2"
-      );
-
-    });
-
-  });
-
-  return bracket;
-}
-
-
-/*
- * ------------------------------------------------------------
- * ROUND NAMES
- * ------------------------------------------------------------
- */
-
-function roundTitle(round){
-
-  const titles = {
-
-    prelim:"PRELIMINARY",
-    r16:"ROUND OF 16",
-    qf:"QUARTER FINALS",
-    sf:"SEMI FINALS",
-    final:"FINAL",
-    third:"THIRD PLACE"
-
+/* Default scheduling:
+   1) 26-only matches first.
+   2) All 25-only matches start after 07:45.
+   3) Mixed 26/25 matches follow.
+*/
+function scheduleMatches(){
+  const priority = matches.filter(m=>m.stage==="prelim");
+  const both26 = m => {
+    const a=player(m.p1)?.roll || "", b=player(m.p2)?.roll || "";
+    return a.includes("26") && b.includes("26");
+  };
+  const only25 = m => {
+    const a=player(m.p1)?.roll || "", b=player(m.p2)?.roll || "";
+    return a && b && !a.includes("26") && !b.includes("26");
   };
 
-  return titles[round] || round.toUpperCase();
+  const order = [
+    ...priority.filter(both26),
+    ...priority.filter(m=>!both26(m) && !only25(m)),
+    ...priority.filter(only25),
+    ...matches.filter(m=>m.stage==="r16"),
+    ...matches.filter(m=>m.stage==="qf"),
+    ...matches.filter(m=>m.stage==="sf"),
+    ...matches.filter(m=>m.stage==="final")
+  ];
+
+  let cursor=minutesFromTime(settings.startTime);
+  const minAfter745=466; // 07:46
+  for(const m of order){
+    if(only25(m) && cursor<minAfter745) cursor=minAfter745;
+    m.time=timeString(cursor);
+    cursor += Number(settings.halfMinutes)*2 + Number(settings.gapMinutes);
+  }
 }
-
-
-/*
- * ------------------------------------------------------------
- * MATCH STATUS
- * ------------------------------------------------------------
- */
-
-function matchStatus(match){
-
-  if(!match){
-    return "";
-  }
-
-  if(match.winner){
-
-    if(match.penalties){
-      return "PENALTIES";
-    }
-
-    return "FINAL";
-  }
-
-  if(match.bo3){
-
-    if(Array.isArray(match.games) && match.games.length){
-
-      return "BEST OF 3";
-    }
-
-    return "BEST OF 3";
-  }
-
-  if(
-    match.score1 !== null &&
-    match.score1 !== undefined &&
-    match.score2 !== null &&
-    match.score2 !== undefined
-  ){
-
-    if(
-      Number(match.score1) === Number(match.score2) &&
-      match.penalties
-    ){
-      return "PENALTIES";
-    }
-
-    return "SCORE";
-  }
-
-  return "UPCOMING";
-}
-
-
-/*
- * ------------------------------------------------------------
- * RENDER TEAM
- * ------------------------------------------------------------
- */
-
-function renderTeam(match, player, score, isWinner){
-
-  const row = el("div",{
-    class:"team"
-  });
-
-  const name = el("div",{
-    class:"team-name" +
-      (isWinner ? " winner" : "")
-  });
-
-  name.textContent = player || "TBD";
-
-  const scoreNode = el("div",{
-    class:"score"
-  });
-
-  if(
-    score !== null &&
-    score !== undefined
-  ){
-
-    scoreNode.textContent = score;
-
-  }
-  else{
-
-    scoreNode.textContent = "–";
-
-  }
-
-  row.appendChild(name);
-  row.appendChild(scoreNode);
-
-  return row;
-}
-
-
-/*
- * ------------------------------------------------------------
- * RENDER GAMES
- * ------------------------------------------------------------
- */
-
-function renderGames(match){
-
-  if(
-    !match.bo3 ||
-    !Array.isArray(match.games) ||
-    !match.games.length
-  ){
-
-    return null;
-  }
-
-  const container = el("div",{
-    class:"games"
-  });
-
-  const p1Name = match.p1eff || match.p1 || "TBD";
-  const p2Name = match.p2eff || match.p2 || "TBD";
-
-  match.games.forEach((game,index) => {
-
-    let text =
-      "Game " +
-      (index + 1) +
-      ": " +
-      game.score1 +
-      "-" +
-      game.score2;
-
-    if(game.pen){
-
-      text += " (pens";
-
-      if(
-        game.penaltyScore1 !== undefined &&
-        game.penaltyScore2 !== undefined
-      ){
-
-        text +=
-          " " +
-          game.penaltyScore1 +
-          "–" +
-          game.penaltyScore2;
-
-      }
-
-      text += ")";
-
-    }
-
-    if(game.winnerSide){
-
-      text +=
-        " → " +
-        (
-          game.winnerSide === "p1"
-            ? p1Name
-            : p2Name
-        );
-
-    }
-
-    const gameNode = el("div",{
-      class:"game"
-    });
-
-    gameNode.textContent = text;
-
-    container.appendChild(gameNode);
-
-  });
-
-  return container;
-}
-
-
-/*
- * ------------------------------------------------------------
- * RENDER MATCH
- * ------------------------------------------------------------
- */
-
-function renderMatch(match,index,round){
-
-  if(!match){
-    return el("div",{
-      class:"empty",
-      text:"NO MATCH"
-    });
-  }
-
-  const card = el("div",{
-    class:"match"
-  });
-
-
-  /*
-   * HEADER
-   */
-
-  const header = el("div",{
-    class:"match-head"
-  });
-
-  const label = el("div",{
-    class:"match-label"
-  });
-
-  label.textContent =
-    roundTitle(round) +
-    " · MATCH " +
-    (index + 1);
-
-  const status = el("div",{
-    class:"match-status"
-  });
-
-  status.textContent =
-    matchStatus(match);
-
-  header.appendChild(label);
-  header.appendChild(status);
-
-  card.appendChild(header);
-
-
-  /*
-   * PLAYERS
-   */
-
-  const p1 = match.p1eff || match.p1;
-  const p2 = match.p2eff || match.p2;
-
-  const winner = getWinner(match);
-
-  card.appendChild(
-    renderTeam(
-      match,
-      p1,
-      match.score1,
-      winner === p1
-    )
-  );
-
-  card.appendChild(
-    renderTeam(
-      match,
-      p2,
-      match.score2,
-      winner === p2
-    )
-  );
-
-
-  /*
-   * PENALTY INFORMATION
-   */
-
-  if(match.penalties && winner){
-
-    let penaltyText =
-      "Won on penalties";
-
-    if(
-      match.penaltyScore1 !== null &&
-      match.penaltyScore1 !== undefined &&
-      match.penaltyScore2 !== null &&
-      match.penaltyScore2 !== undefined
-    ){
-
-      penaltyText +=
-        " · Shootout " +
-        match.penaltyScore1 +
-        "–" +
-        match.penaltyScore2;
-
-    }
-
-    const penNote = el("div",{
-      class:"pen-note"
-    });
-
-    penNote.textContent = penaltyText;
-
-    card.appendChild(penNote);
-
-  }
-
-
-  /*
-   * BEST OF 3 GAMES
-   */
-
-  const games = renderGames(match);
-
-  if(games){
-    card.appendChild(games);
-  }
-
-
-  return card;
-}
-
-
-/*
- * ------------------------------------------------------------
- * RENDER ROUND
- * ------------------------------------------------------------
- */
-
-function renderRound(roundName){
-
-  const column = el("div",{
-    class:"round"
-  });
-
-  const title = el("div",{
-    class:"round-head"
-  });
-
-  title.textContent =
-    roundTitle(roundName);
-
-  column.appendChild(title);
-
-
-  const matches =
-    state.bracket &&
-    state.bracket[roundName]
-      ? state.bracket[roundName]
-      : [];
-
-
-  if(!matches.length){
-
-    column.appendChild(
-      el("div",{
-        class:"empty",
-        text:"NO MATCHES"
-      })
-    );
-
-    return column;
-  }
-
-
-  matches.forEach((match,index) => {
-
-    column.appendChild(
-      renderMatch(
-        match,
-        index,
-        roundName
-      )
-    );
-
-  });
-
-
-  return column;
-}
-
-
-/*
- * ------------------------------------------------------------
- * RENDER CHAMPION
- * ------------------------------------------------------------
- */
-
-function renderChampion(){
-
-  if(
-    !state.bracket ||
-    !state.bracket.final ||
-    !state.bracket.final.length
-  ){
-
-    return null;
-  }
-
-  const finalMatch =
-    state.bracket.final[0];
-
-  const winner =
-    getWinner(finalMatch);
-
-  if(!winner){
-    return null;
-  }
-
-  const box = el("div",{
-    class:"champion"
-  });
-
-  const label = el("div",{
-    class:"label"
-  });
-
-  label.textContent =
-    "🏆 TOURNAMENT CHAMPION";
-
-  const name = el("div",{
-    class:"name"
-  });
-
-  name.textContent = winner;
-
-  box.appendChild(label);
-  box.appendChild(name);
-
-  return box;
-}
-
-
-/*
- * ------------------------------------------------------------
- * RENDER
- * ------------------------------------------------------------
- */
+scheduleMatches();
 
 function render(){
-
-  const app =
-    document.getElementById("app");
-
-  app.innerHTML = "";
-
-
-  if(!state.bracket){
-
-    app.appendChild(
-      el("div",{
-        class:"empty",
-        text:"Tournament data is not available."
-      })
-    );
-
-    return;
+  scheduleMatches();
+  document.getElementById("startBadge").textContent=settings.startTime;
+  document.getElementById("durationBadge").textContent=(Number(settings.halfMinutes)*2)+" min";
+  const root=document.getElementById("bracket");
+  root.innerHTML="";
+  for(const s of stages){
+    const col=document.createElement("section");
+    col.className="stage "+s.id;
+    col.innerHTML=`<h2>${s.label}</h2><div class="stage-list"></div>`;
+    const list=col.querySelector(".stage-list");
+    matches.filter(m=>m.stage===s.id).forEach(m=>list.appendChild(matchCard(m)));
+    root.appendChild(col);
   }
+}
+function matchCard(m){
+  const el=document.createElement("article");
+  el.className="match";
+  const p1=player(m.p1), p2=player(m.p2);
+  const finished=m.played && m.winner;
+  const p1Win=finished && m.winner===m.p1;
+  const p2Win=finished && m.winner===m.p2;
+  let status=m.played ? (m.penalties ? `Penalties ${m.penalties}` : "Final") : (m.bye ? "BYE" : "Not played");
+  if(m.id==="r8" && !m.played) status="Varun Rathi gets a bye";
+  el.innerHTML=`
+    <div class="time">${m.time || "--:--"}</div>
+    <div class="player ${p1Win?"winner":""} ${finished&&!p1Win?"loser":""}">
+      ${displayPlayer(m.p1)}
+      <span class="score">${m.score1 ?? "–"}</span>
+    </div>
+    <div class="player ${p2Win?"winner":""} ${finished&&!p2Win?"loser":""}">
+      ${displayPlayer(m.p2)}
+      <span class="score">${m.score2 ?? "–"}</span>
+    </div>
+    <div class="match-foot">
+      <span class="status">${status}</span>
+      ${canEnterResult(m) ? `<button class="result-btn" data-result="${m.id}">${m.played?"Edit Result":"Enter Result"}</button>`:""}
+    </div>`;
+  const btn=el.querySelector("[data-result]");
+  if(btn) btn.onclick=()=>openResult(m.id);
+  return el;
+}
+function canEnterResult(m){
+  return Boolean(m.p1 && m.p2 && !m.bye);
+}
 
-
-  state.bracket =
-    annotate(state.bracket);
-
-
-  /*
-   * PRELIMINARY
-   */
-
-  if(
-    state.bracket.prelim &&
-    state.bracket.prelim.length
-  ){
-
-    const section =
-      el("section");
-
-    const title =
-      el("div",{
-        class:"section-title"
-      });
-
-    title.appendChild(
-      el("h2",{
-        text:"KNOCKOUT BRACKET"
-      })
-    );
-
-    title.appendChild(
-      el("span",{
-        text:"LIVE RESULTS"
-      })
-    );
-
-    section.appendChild(title);
-
-
-    const bracket =
-      el("div",{
-        class:"bracket"
-      });
-
-    const rounds =
-      el("div",{
-        class:"rounds"
-      });
-
-
-    [
-      "prelim",
-      "r16",
-      "qf",
-      "sf",
-      "final"
-    ].forEach(round => {
-
-      rounds.appendChild(
-        renderRound(round)
-      );
-
-    });
-
-
-    bracket.appendChild(rounds);
-    section.appendChild(bracket);
-
-    app.appendChild(section);
-
-  }
+function propagateWinner(m){
+  if(!m.winner || !m.nextMatch) return;
+  const next=matches.find(x=>x.id===m.nextMatch);
+  if(!next) return;
+  if(m.nextSlot===0) next.p1=m.winner;
+  else next.p2=m.winner;
+}
+function openResult(id){
+  resultMatchId=id;
+  const m=matches.find(x=>x.id===id);
+  document.getElementById("resultTitle").textContent=`${m.p1} vs ${m.p2}`;
+  document.getElementById("p1Label").textContent=m.p1;
+  document.getElementById("p2Label").textContent=m.p2;
+  document.getElementById("score1").value=m.score1 ?? 0;
+  document.getElementById("score2").value=m.score2 ?? 0;
+  document.getElementById("penaltyField").style.display=(Number(m.score1)===Number(m.score2))?"block":"none";
+  const sel=document.getElementById("penaltyWinner");
+  sel.innerHTML=`<option value="">Select penalty winner</option><option value="${escapeHtml(m.p1)}">${escapeHtml(m.p1)}</option><option value="${escapeHtml(m.p2)}">${escapeHtml(m.p2)}</option>`;
+  if(m.winner) sel.value=m.winner;
+  document.getElementById("resultOverlay").classList.add("show");
+}
+function closeResult(){
+  resultMatchId=null;
+  document.getElementById("resultOverlay").classList.remove("show");
+}
+function saveResult(){
+  const m=matches.find(x=>x.id===resultMatchId);
+  if(!m) return;
+  const s1=Number(document.getElementById("score1").value);
+  const s2=Number(document.getElementById("score2").value);
+  if(s1<0||s2<0) return alert("Scores cannot be negative.");
+  let winner=null, penalties=null;
+  if(s1>s2) winner=m.p1;
+  else if(s2>s1) winner=m.p2;
   else{
-
-    const section =
-      el("section");
-
-    const title =
-      el("div",{
-        class:"section-title"
-      });
-
-    title.appendChild(
-      el("h2",{
-        text:"KNOCKOUT BRACKET"
-      })
-    );
-
-    section.appendChild(title);
-
-    const bracket =
-      el("div",{
-        class:"bracket"
-      });
-
-    const rounds =
-      el("div",{
-        class:"rounds"
-      });
-
-
-    [
-      "r16",
-      "qf",
-      "sf",
-      "final"
-    ].forEach(round => {
-
-      rounds.appendChild(
-        renderRound(round)
-      );
-
-    });
-
-
-    bracket.appendChild(rounds);
-    section.appendChild(bracket);
-
-    app.appendChild(section);
-
+    winner=document.getElementById("penaltyWinner").value;
+    if(!winner) return alert("The match is a draw. Select the penalty winner.");
+    penalties=`${winner===m.p1?s1:""}${winner===m.p1?"":""}-`;
+    const p1pen=prompt(`Penalty score for ${m.p1}:`, "4");
+    const p2pen=prompt(`Penalty score for ${m.p2}:`, "3");
+    if(p1pen===null||p2pen===null) return;
+    penalties=`${p1pen}-${p2pen}`;
   }
-
-
-  /*
-   * THIRD PLACE
-   */
-
-  if(
-    state.bracket.third &&
-    state.bracket.third.length
-  ){
-
-    const section =
-      el("section");
-
-    const title =
-      el("div",{
-        class:"section-title"
-      });
-
-    title.appendChild(
-      el("h2",{
-        text:"THIRD PLACE"
-      })
-    );
-
-    section.appendChild(title);
-
-
-    const bracket =
-      el("div",{
-        class:"bracket"
-      });
-
-    const rounds =
-      el("div",{
-        class:"rounds"
-      });
-
-    rounds.appendChild(
-      renderRound("third")
-    );
-
-    bracket.appendChild(rounds);
-
-    section.appendChild(bracket);
-
-    app.appendChild(section);
-
-  }
-
-
-  /*
-   * CHAMPION
-   */
-
-  const champion =
-    renderChampion();
-
-  if(champion){
-    app.appendChild(champion);
-  }
-
-
-  /*
-   * ROSTER
-   */
-
-  if(state.players.length){
-
-    const panel =
-      el("div",{
-        class:"roster-panel"
-      });
-
-    const title =
-      el("div",{
-        class:"section-title"
-      });
-
-    title.appendChild(
-      el("h2",{
-        text:"TOURNAMENT PLAYERS"
-      })
-    );
-
-    title.appendChild(
-      el("span",{
-        text:String(state.players.length) + " PLAYERS"
-      })
-    );
-
-    panel.appendChild(title);
-
-
-    const roster =
-      el("div",{
-        class:"roster-grid"
-      });
-
-
-    state.players.forEach(player => {
-
-      roster.appendChild(
-        el("div",{
-          class:"roster-player",
-          text:player
-        })
-      );
-
-    });
-
-
-    panel.appendChild(roster);
-
-    app.appendChild(panel);
-
-  }
-
+  m.score1=s1;m.score2=s2;m.winner=winner;m.penalties=penalties;m.played=true;
+  propagateWinner(m);
+  saveState();closeResult();render();
 }
 
-
-/*
- * ------------------------------------------------------------
- * REFRESH
- * ------------------------------------------------------------
- */
-
-document
-  .getElementById("refreshBtn")
-  .addEventListener("click",() => {
-
-    window.location.reload();
-
-  });
-
-
-/*
- * ------------------------------------------------------------
- * INITIALIZE
- * ------------------------------------------------------------
- */
-
-if(
-  typeof TOURNAMENT_DATA === "undefined"
-){
-
-  document
-    .getElementById("app")
-    .innerHTML = `
-      <div class="empty">
-        ERROR: tournament-data.js could not be loaded.
-        <br><br>
-        Make sure <strong>tournament-data.js</strong>
-        is in the same GitHub folder as
-        <strong>index.html</strong>.
-      </div>
-  `;
-
+/* Manual bracket editor */
+function openEditor(){
+  editSnapshot={matches:clone(matches),settings:clone(settings)};
+  document.getElementById("startTime").value=settings.startTime;
+  document.getElementById("halfMinutes").value=settings.halfMinutes;
+  document.getElementById("gapMinutes").value=settings.gapMinutes;
+  renderEditor();
+  document.getElementById("editPanel").classList.add("show");
+  window.scrollTo({top:0,behavior:"smooth"});
 }
-else{
-
-  state.bracket =
-    annotate(state.bracket);
-
+function renderEditor(){
+  const grid=document.getElementById("editGrid");
+  grid.innerHTML="";
+  for(const m of matches){
+    const box=document.createElement("div");
+    box.className="edit-match";
+    box.innerHTML=`<div class="stage-label">${m.stage} · ${m.id}</div>
+      <label>Player 1</label><select data-mid="${m.id}" data-slot="p1"></select>
+      <label>Player 2</label><select data-mid="${m.id}" data-slot="p2"></select>`;
+    grid.appendChild(box);
+    for(const slot of ["p1","p2"]){
+      const sel=box.querySelector(`[data-slot="${slot}"]`);
+      sel.innerHTML=`<option value="">TBD / Empty</option>`+
+        PLAYERS.map(p=>`<option value="${escapeHtml(p[0])}">${escapeHtml(p[0])}${p[1]?" — "+escapeHtml(p[1]):""}</option>`).join("");
+      sel.value=m[slot]||"";
+      sel.onchange=()=>{
+        m[slot]=sel.value||null;
+        m.played=false;m.winner=null;m.score1=null;m.score2=null;m.penalties=null;
+      };
+    }
+  }
+  document.getElementById("playerPool").innerHTML=PLAYERS.map(p=>`<span class="pool-item">${escapeHtml(p[0])}${p[1]?" · "+escapeHtml(p[1]):""}</span>`).join("");
+}
+function closeEditor(){
+  if(editSnapshot){
+    matches=editSnapshot.matches;
+    settings=editSnapshot.settings;
+  }
+  document.getElementById("editPanel").classList.remove("show");
+  editSnapshot=null;
   render();
-
+}
+function saveEditor(){
+  settings.startTime=document.getElementById("startTime").value || "07:30";
+  settings.halfMinutes=Math.max(1,Number(document.getElementById("halfMinutes").value)||6);
+  settings.gapMinutes=Math.max(0,Number(document.getElementById("gapMinutes").value)||0);
+  scheduleMatches();
+  saveState();
+  editSnapshot=null;
+  document.getElementById("editPanel").classList.remove("show");
+  render();
 }
 
-</script>
+document.getElementById("editBtn").onclick=openEditor;
+document.getElementById("cancelEdit").onclick=closeEditor;
+document.getElementById("saveEdit").onclick=saveEditor;
+document.getElementById("closeResult").onclick=closeResult;
+document.getElementById("saveResult").onclick=saveResult;
+document.getElementById("score1").addEventListener("input",()=>{
+  document.getElementById("penaltyField").style.display=
+    Number(document.getElementById("score1").value)===Number(document.getElementById("score2").value)?"block":"none";
+});
+document.getElementById("score2").addEventListener("input",()=>{
+  document.getElementById("penaltyField").style.display=
+    Number(document.getElementById("score1").value)===Number(document.getElementById("score2").value)?"block":"none";
+});
 
+document.getElementById("resetBtn").onclick=()=>{
+  if(!confirm("Reset the whole tournament? This clears all scores, winners and manual bracket changes.")) return;
+  matches=clone(DEFAULT_MATCHES);
+  settings={startTime:"07:30",halfMinutes:6,gapMinutes:0};
+  saveState();render();
+};
+
+render();
+</script>
 </body>
 </html>
