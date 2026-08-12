@@ -1,683 +1,341 @@
-/*
-  FIFA Knockout Tracker — TOURNAMENT DATA
-
-  EDIT THIS FILE ONLY.
-
-  After changing:
-    1. Save the file.
-    2. Commit changes on GitHub.
-    3. GitHub Pages redeploys.
-    4. Refresh the public tournament URL.
-
-  PENALTY EXAMPLE:
-
-    score1: 2,
-    score2: 2,
-    penalties: true,
-    penWinner: "Anirban Guha",
-    penaltyScore1: 4,
-    penaltyScore2: 3,
-    winner: "Anirban Guha"
-
-  This means:
-
-    Anirban Guha  2
-    Robert Gupta  2
-
-    Penalties: 4-3
-
-    Winner: Anirban Guha
-*/
-
-
 const TOURNAMENT_DATA = {
+    settings: {
+        startTime: "07:30",
+        halfMinutes: 6,
+        gapMinutes: 0
+    },
 
-  /*
-   * ==========================================
-   * PLAYERS
-   * ==========================================
-   */
-
-  players: [
-    "Anirban Guha",
-    "Robert Gupta",
-    "Prakul Mishra",
-    "RajVardhan",
-    "Abhilash Naskar",
-    "Hodor",
-    "Karanbir Singh Dhoul",
-    "Rieshi Rao",
-    "Meet Gowsawmi",
-    "Adhyan Kumar",
-    "Chaitanya",
-    "Shubh Wadhwa",
-    "Jay Mishra",
-    "Kartikay Sharma",
-    "Kush Soni",
-    "Parimal Mishra",
-    "Siddhant Singh",
-    "Aryaman Singh",
-    "Tushar Singh",
-    "Hemant Agrawal",
-    "Shubham Kashyap",
-    "Varun Rathi",
-    "Nima"
-  ],
-
-
-  /*
-   * ==========================================
-   * BRACKET
-   * ==========================================
-   */
-
-  bracket: {
-
-    /*
-     * ========================================
-     * PRELIMINARY ROUND
-     * ========================================
-     */
-
-    prelim: [
-
-      {
-        p1: "Anirban Guha",
-        p2: "Robert Gupta",
-
-        score1: 0,
-        score2: 0,
-
-        winner: "Anirban Guha",
-
-        penalties: True,
-        penWinner: null,
-
-        penaltyScore1: 4,
-        penaltyScore2: 3,
-
-        bo3: false,
-        games: []
-      },
-
-      {
-        p1: "Prakul Mishra",
-        p2: "RajVardhan",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-      {
-        p1: "Abhilash Naskar",
-        p2: "Hodor",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-      {
-        p1: "Karanbir Singh Dhoul",
-        p2: "Rieshi Rao",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-      {
-        p1: "Meet Gowsawmi",
-        p2: "Adhyan Kumar",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-      {
-        p1: "Chaitanya",
-        p2: "Shubh Wadhwa",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-      {
-        p1: "Jay Mishra",
-        p2: "Kartikay Sharma",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      }
-
+    players: [
+        ["Prakul Mishra", "MBATM25025"],
+        ["Tushar Singh", "MBA25181"],
+        ["Shubham Kashyap", "MBA25140"],
+        ["Adhyan Kumar", "MBA25231"],
+        ["Aryaman Singh", "MBA25059"],
+        ["Nima", "MBA25075"],
+        ["Robert Gupta", "mba25083"],
+        ["PARIMAL MISHRA", "mba25171"],
+        ["Anirban Guha", "MBA26008"],
+        ["Rieshi Rao", "MBA26049"],
+        ["Shubh Wadhwa", "MBA26120"],
+        ["Karanbir Singh Dhoul", "MBA26158"],
+        ["Abhilash Naskar", "MBA26004"],
+        ["Siddhant Singh", "MBA25180"],
+        ["Kush Soni", "MBA25119"],
+        ["Jay Mishra", "MBATm26037"],
+        ["Hemant Agrawal", "mba25188"],
+        ["Varun Rathi", "MBA25230"],
+        ["kartikay sharma", "mbatm26016"],
+        ["Meet Gowsawmi", "25001"],
+        ["Rehan Malik", ""],
+        ["Chaitanya Wankhande", "25002"],
+        ["RajVardhan", "25003"],
+        ["Hodor", "25004"],
+        ["Arush", "25005"]
     ],
 
-
-    /*
-     * ========================================
-     * ROUND OF 16
-     * ========================================
-     */
-
-    r16: [
-
-      {
-        p1: "Kush Soni",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 0
+    matches: [
+        {
+            id: "p1",
+            stage: "prelim",
+            p1: "Anirban Guha",
+            p2: "Robert Gupta",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r1",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p2",
+            stage: "prelim",
+            p1: "Prakul Mishra",
+            p2: "RajVardhan",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r2",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p3",
+            stage: "prelim",
+            p1: "Abhilash Naskar",
+            p2: "Hodor",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r3",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p4",
+            stage: "prelim",
+            p1: "Karanbir Singh Dhoul",
+            p2: "Rieshi Rao",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r4",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p5",
+            stage: "prelim",
+            p1: "Meet Gowsawmi",
+            p2: "Adhyan Kumar",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r5",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p6",
+            stage: "prelim",
+            p1: "Chaitanya Wankhande",
+            p2: "Shubh Wadhwa",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r6",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p7",
+            stage: "prelim",
+            p1: "Jay Mishra",
+            p2: "kartikay sharma",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "r7",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "p8",
+            stage: "prelim",
+            p1: "Nima",
+            p2: "Arush",
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: null,
+            nextSlot: null,
+            bye: false
         },
 
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Parimal Mishra",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 1
+        {
+            id: "r1",
+            stage: "r16",
+            p1: "Kush Soni",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q1",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "r2",
+            stage: "r16",
+            p1: "PARIMAL MISHRA",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q1",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "r3",
+            stage: "r16",
+            p1: "Siddhant Singh",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q2",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "r4",
+            stage: "r16",
+            p1: "Tushar Singh",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q2",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "r5",
+            stage: "r16",
+            p1: "Aryaman Singh",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q3",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "r6",
+            stage: "r16",
+            p1: "Hemant Agrawal",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q3",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "r7",
+            stage: "r16",
+            p1: "Shubham Kashyap",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "q4",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "r8",
+            stage: "r16",
+            p1: "Varun Rathi",
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: "Varun Rathi",
+            penalties: null,
+            nextMatch: "q4",
+            nextSlot: 1,
+            bye: true
         },
 
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Siddhant Singh",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 2
+        {
+            id: "q1",
+            stage: "qf",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "s1",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "q2",
+            stage: "qf",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "s1",
+            nextSlot: 1,
+            bye: false
+        },
+        {
+            id: "q3",
+            stage: "qf",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "s2",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "q4",
+            stage: "qf",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "s2",
+            nextSlot: 1,
+            bye: false
         },
 
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Aryaman Singh",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 3
+        {
+            id: "s1",
+            stage: "sf",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "f1",
+            nextSlot: 0,
+            bye: false
+        },
+        {
+            id: "s2",
+            stage: "sf",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: "f1",
+            nextSlot: 1,
+            bye: false
         },
 
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Tushar Singh",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 4
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Hemant Agrawal",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 5
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Shubham Kashyap",
-        p2: null,
-
-        ref2: {
-          round: "prelim",
-          idx: 6
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        p1: "Varun Rathi",
-        p2: "Nima",
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      }
-
-    ],
-
-
-    /*
-     * ========================================
-     * QUARTER FINALS
-     * ========================================
-     */
-
-    qf: [
-
-      {
-        ref1: {
-          round: "r16",
-          idx: 0
-        },
-
-        ref2: {
-          round: "r16",
-          idx: 1
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        ref1: {
-          round: "r16",
-          idx: 2
-        },
-
-        ref2: {
-          round: "r16",
-          idx: 3
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        ref1: {
-          round: "r16",
-          idx: 4
-        },
-
-        ref2: {
-          round: "r16",
-          idx: 5
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      },
-
-
-      {
-        ref1: {
-          round: "r16",
-          idx: 6
-        },
-
-        ref2: {
-          round: "r16",
-          idx: 7
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-        games: []
-      }
-
-    ],
-
-
-    /*
-     * ========================================
-     * SEMI FINALS
-     *
-     * Best of 3
-     * ========================================
-     */
-
-    sf: [
-
-      {
-        ref1: {
-          round: "qf",
-          idx: 0
-        },
-
-        ref2: {
-          round: "qf",
-          idx: 1
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        bo3: true,
-
-        games: []
-      },
-
-
-      {
-        ref1: {
-          round: "qf",
-          idx: 2
-        },
-
-        ref2: {
-          round: "qf",
-          idx: 3
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        bo3: true,
-
-        games: []
-      }
-
-    ],
-
-
-    /*
-     * ========================================
-     * FINAL
-     *
-     * Best of 3
-     * ========================================
-     */
-
-    final: [
-
-      {
-        ref1: {
-          round: "sf",
-          idx: 0
-        },
-
-        ref2: {
-          round: "sf",
-          idx: 1
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        bo3: true,
-
-        games: []
-      }
-
-    ],
-
-
-    /*
-     * ========================================
-     * THIRD PLACE
-     * ========================================
-     */
-
-    third: [
-
-      {
-        ref1: {
-          round: "sf",
-          idx: 0,
-          loser: true
-        },
-
-        ref2: {
-          round: "sf",
-          idx: 1,
-          loser: true
-        },
-
-        score1: null,
-        score2: null,
-
-        winner: null,
-
-        penalties: false,
-        penWinner: null,
-
-        penaltyScore1: null,
-        penaltyScore2: null,
-
-        bo3: false,
-
-        games: []
-      }
-
+        {
+            id: "f1",
+            stage: "final",
+            p1: null,
+            p2: null,
+            score1: null,
+            score2: null,
+            winner: null,
+            penalties: null,
+            nextMatch: null,
+            nextSlot: null,
+            bye: false
+        }
     ]
-
-  }
-
 };
