@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FIFA Knockout Tracker</title>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap');
 
@@ -15,100 +16,308 @@
     --line:#1E4735;
     --grass:#2FA36B;
     --grass-dim:#1F7A4D;
-    --chalk:#F5F7F2;
+    --cream:#F1E9D5;
     --muted:#8AA398;
-    --amber:#F2A93B;
-    --amber-dim:#8A611F;
-    --red:#E2564F;
+    --yellow:#E7C75A;
+    --red:#D95C5C;
   }
-  *{box-sizing:border-box;}
+
+  *{
+    box-sizing:border-box;
+  }
+
   body{
     margin:0;
     background:
-      radial-gradient(circle at 15% 8%, rgba(47,163,107,0.10), transparent 40%),
+      radial-gradient(circle at top left,rgba(47,163,107,.08),transparent 30%),
       var(--pitch-black);
-    color:var(--chalk);
-    font-family:'Inter',sans-serif;
+    color:var(--cream);
+    font-family:Inter,Arial,sans-serif;
     min-height:100vh;
   }
-  .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 80px;}
 
-  header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;border-bottom:1px solid var(--line);padding-bottom:20px;}
-  .brand{display:flex;flex-direction:column;gap:4px;}
-  .brand .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--grass);text-transform:uppercase;}
-  .brand h1{font-family:'Archivo Black',sans-serif;font-size:34px;margin:0;letter-spacing:.01em;}
-  .brand h1 span{color:var(--amber);}
+  .wrap{
+    width:min(1500px,96vw);
+    margin:auto;
+    padding:28px 0 60px;
+  }
 
-  .stage-rail{display:flex;gap:0;font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;}
-  .stage-rail div{padding:6px 12px;color:var(--muted);border-bottom:2px solid var(--line);white-space:nowrap;}
-  .stage-rail div.active{color:var(--amber);border-bottom:2px solid var(--amber);}
-  .stage-rail div.done{color:var(--grass);border-bottom:2px solid var(--grass-dim);}
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px;
+    margin-bottom:24px;
+  }
 
-  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px;}
+  .eyebrow{
+    font:11px 'Space Mono',monospace;
+    letter-spacing:2px;
+    color:var(--grass);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  h1{
+    margin:0;
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(30px,5vw,58px);
+    line-height:.95;
+    letter-spacing:-2px;
+  }
+
+  .subtitle{
+    color:var(--muted);
+    font:12px 'Space Mono',monospace;
+    margin-top:10px;
+  }
+
+  .status{
+    text-align:right;
+    font:11px 'Space Mono',monospace;
+    color:var(--muted);
+  }
+
+  .status strong{
+    display:block;
+    color:var(--grass);
+    font-size:16px;
+    margin-top:4px;
+  }
+
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:18px;
+  }
+
+  button,
+  select,
+  input{
+    font:12px 'Space Mono',monospace;
+  }
+
   button{
-    font-family:'Inter',sans-serif;font-weight:600;font-size:13px;
-    background:var(--card);color:var(--chalk);border:1px solid var(--line);
-    padding:10px 16px;border-radius:6px;cursor:pointer;transition:border-color .15s, background .15s;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--cream);
+    padding:9px 12px;
+    border-radius:5px;
+    cursor:pointer;
   }
-  button:hover{border-color:var(--grass-dim);background:var(--card-2);}
-  button.primary{background:var(--grass-dim);border-color:var(--grass-dim);}
-  button.primary:hover{background:var(--grass);}
-  button.danger{border-color:#5c2b28;}
-  button.danger:hover{background:#3a1a18;border-color:var(--red);}
-  button:disabled{opacity:.4;cursor:not-allowed;}
 
-  .roster-panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:28px;}
-  .roster-panel h2{font-family:'Archivo Black',sans-serif;font-size:15px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;}
-  .roster-panel p.hint{color:var(--muted);font-size:13px;margin:0 0 16px;}
-  .roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;}
-  .roster-grid input{
-    width:100%;background:var(--pitch-black);border:1px solid var(--line);color:var(--chalk);
-    padding:9px 10px;border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;
+  button:hover{
+    background:var(--card-2);
+    border-color:var(--grass-dim);
   }
-  .roster-grid label{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);display:block;margin-bottom:4px;}
 
-  .empty-cta{text-align:center;padding:60px 20px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);}
-  .empty-cta p{margin:0 0 18px;font-size:14px;}
+  input,
+  select{
+    background:#07130F;
+    color:var(--cream);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:7px 8px;
+  }
 
-  .bracket{display:flex;gap:22px;overflow-x:auto;padding-bottom:20px;}
-  .round-col{min-width:250px;display:flex;flex-direction:column;}
-  .round-col h3{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--grass);margin:0 0 14px;text-align:center;}
-  .matches{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:18px;}
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:30px 0 12px;
+  }
 
-  .match{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;position:relative;}
-  .match.decided{border-color:var(--grass-dim);}
-  .slot{display:flex;align-items:center;justify-content:space-between;padding:7px 6px;border-radius:5px;gap:8px;}
-  .slot.winner{background:rgba(242,169,59,0.12);}
-  .slot .name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
-  .slot.tbd .name, .slot.empty .name{color:var(--muted);font-style:italic;font-weight:400;}
-  .slot.winner .name{color:var(--amber);font-weight:600;}
+  .section-title h2{
+    font:16px 'Archivo Black',sans-serif;
+    margin:0;
+  }
+
+  .section-title span{
+    font:10px 'Space Mono',monospace;
+    color:var(--muted);
+  }
+
+  .bracket{
+    overflow-x:auto;
+    padding-bottom:15px;
+  }
+
+  .rounds{
+    display:grid;
+    grid-template-columns:
+      repeat(6,minmax(210px,1fr));
+    gap:12px;
+    min-width:1280px;
+  }
+
+  .round{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .round-head{
+    font:11px 'Space Mono',monospace;
+    color:var(--grass);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    padding:8px 10px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .match{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:0 8px 24px rgba(0,0,0,.16);
+  }
+
+  .match-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:7px 9px;
+    background:rgba(0,0,0,.13);
+    border-bottom:1px solid var(--line);
+  }
+
+  .match-label{
+    font:9px 'Space Mono',monospace;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+
+  .match-status{
+    font:9px 'Space Mono',monospace;
+    color:var(--yellow);
+  }
+
+  .team{
+    display:grid;
+    grid-template-columns:1fr 34px;
+    align-items:center;
+    gap:8px;
+    padding:9px;
+    border-bottom:1px solid rgba(30,71,53,.5);
+  }
+
+  .team:last-child{
+    border-bottom:0;
+  }
+
+  .team-name{
+    font-size:12px;
+    font-weight:600;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .team-name.winner{
+    color:var(--grass);
+  }
+
+  .score{
+    text-align:center;
+    font:700 15px 'Space Mono',monospace;
+  }
+
   .score-box{
-    font-family:'Space Mono',monospace;font-weight:700;font-size:14px;width:34px;text-align:center;
-    background:var(--pitch-black);border:1px solid var(--line);border-radius:4px;color:var(--chalk);padding:4px 0;
+    width:34px;
+    text-align:center;
+    padding:6px 2px;
   }
-  .score-box:disabled{opacity:.3;}
-  .vs-divider{height:1px;background:var(--line);margin:2px 0;}
-  .match-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;}
-  .match-actions select{
-    background:var(--pitch-black);border:1px solid var(--amber-dim);color:var(--amber);font-size:11px;
-    border-radius:4px;padding:4px 6px;font-family:'Inter',sans-serif;flex:1;
+
+  .pen-note{
+    padding:7px 9px;
+    color:var(--yellow);
+    font:9px 'Space Mono',monospace;
+    border-top:1px solid var(--line);
   }
-  .save-btn{font-size:11px;padding:6px 10px;}
-  .pen-note{font-size:10px;color:var(--amber);font-family:'Space Mono',monospace;margin-top:6px;}
 
-  .final-banner{
-    margin-top:10px;text-align:center;background:linear-gradient(180deg,var(--card-2),var(--card));
-    border:1px solid var(--amber-dim);border-radius:10px;padding:26px 16px;
+  .games{
+    padding:8px 9px;
+    border-top:1px solid var(--line);
   }
-  .final-banner .cup{font-size:34px;margin-bottom:6px;}
-  .final-banner .label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;}
-  .final-banner .champ{font-family:'Archivo Black',sans-serif;font-size:26px;color:var(--amber);margin-top:6px;}
 
-  .third-place{margin-top:36px;}
-  .third-place h3{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;}
-  .third-place .match{max-width:280px;}
+  .game{
+    font:9px 'Space Mono',monospace;
+    color:var(--muted);
+    padding:3px 0;
+  }
 
-  footer{margin-top:40px;text-align:center;color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;}
+  .champion{
+    margin-top:26px;
+    border:1px solid var(--grass);
+    background:linear-gradient(135deg,rgba(47,163,107,.13),rgba(47,163,107,.02));
+    border-radius:7px;
+    padding:22px;
+    text-align:center;
+  }
+
+  .champion .label{
+    font:10px 'Space Mono',monospace;
+    color:var(--grass);
+    letter-spacing:2px;
+  }
+
+  .champion .name{
+    margin-top:8px;
+    font:30px 'Archivo Black',sans-serif;
+  }
+
+  .roster-panel{
+    margin-top:30px;
+    border:1px solid var(--line);
+    background:var(--card);
+    border-radius:7px;
+    padding:18px;
+  }
+
+  .roster-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:7px;
+  }
+
+  .roster-player{
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    font:11px 'Space Mono',monospace;
+    color:var(--muted);
+  }
+
+  .empty{
+    padding:20px;
+    border:1px dashed var(--line);
+    color:var(--muted);
+    font:11px 'Space Mono',monospace;
+    text-align:center;
+  }
+
+  .readonly-banner{
+    position:fixed;
+    bottom:12px;
+    right:12px;
+    z-index:9999;
+    background:#102B21;
+    border:1px solid #1E4735;
+    color:#8AA398;
+    padding:8px 12px;
+    border-radius:6px;
+    font:11px 'Space Mono',monospace;
+    box-shadow:0 4px 18px rgba(0,0,0,.25);
+  }
+
+  /*
+   * PUBLIC PAGE = READ ONLY
+   */
 
   body.public-viewer input,
   body.public-viewer select,
@@ -116,589 +325,1100 @@
     pointer-events:none;
     opacity:.65;
   }
+
   body.public-viewer .toolbar,
   body.public-viewer .roster-panel,
   body.public-viewer .match-actions{
     display:none;
   }
+
   body.public-viewer .score-box{
     pointer-events:none;
     border-color:var(--line);
   }
 
-  @media (max-width:640px){
-    .brand h1{font-size:24px;}
-    .stage-rail{display:none;}
+  @media(max-width:640px){
+
+    .wrap{
+      width:94vw;
+      padding-top:18px;
+    }
+
+    header{
+      align-items:flex-start;
+      flex-direction:column;
+    }
+
+    .status{
+      text-align:left;
+    }
+
+    h1{
+      font-size:38px;
+    }
+
+    .readonly-banner{
+      font-size:9px;
+      bottom:8px;
+      right:8px;
+    }
   }
 </style>
 </head>
-<body>
-<div class="wrap" id="app"></div>
-<div id="readonly-banner" style="position:fixed;bottom:12px;right:12px;z-index:9999;background:#102B21;border:1px solid #1E4735;color:#8AA398;padding:8px 12px;border-radius:6px;font:11px 'Space Mono',monospace;box-shadow:0 4px 18px rgba(0,0,0,.25);">
+
+<body class="public-viewer">
+
+<!--
+  IMPORTANT:
+  tournament-data.js MUST be in the same folder as this index.html.
+-->
+<script src="tournament-data.js"></script>
+
+<div class="wrap">
+
+  <header>
+
+    <div>
+      <div class="eyebrow">
+        FIFA · KNOCKOUT
+      </div>
+
+      <h1>
+        TOURNAMENT<br>
+        TRACKER
+      </h1>
+
+      <div class="subtitle">
+        PUBLIC TOURNAMENT VIEW
+      </div>
+    </div>
+
+    <div class="status">
+      STATUS
+      <strong>LIVE</strong>
+      PUBLIC VIEW · READ ONLY
+    </div>
+
+  </header>
+
+
+  <div class="toolbar">
+    <button id="refreshBtn">
+      REFRESH
+    </button>
+  </div>
+
+
+  <div id="app"></div>
+
+</div>
+
+
+<div class="readonly-banner">
   PUBLIC VIEW · READ ONLY
 </div>
 
-<script src="tournament-data.js"></script>
+
 <script>
-// Tournament data is loaded from tournament-data.js.
-// Keep all editable tournament state in that file.
+
+/*
+ * ============================================================
+ * FIFA KNOCKOUT TRACKER
+ *
+ * Tournament data comes ONLY from:
+ *
+ *      tournament-data.js
+ *
+ * There is deliberately NO localStorage here.
+ *
+ * To update the tournament:
+ *
+ *      GitHub
+ *          ↓
+ *      edit tournament-data.js
+ *          ↓
+ *      commit
+ *          ↓
+ *      GitHub Pages deploy
+ *          ↓
+ *      public page updates
+ *
+ * ============================================================
+ */
+
+
 let state = {
-  players: [...TOURNAMENT_DATA.players],
-  bracket: TOURNAMENT_DATA.bracket ? structuredClone(TOURNAMENT_DATA.bracket) : null
+
+  players: Array.isArray(TOURNAMENT_DATA.players)
+    ? [...TOURNAMENT_DATA.players]
+    : [],
+
+  bracket: TOURNAMENT_DATA.bracket
+    ? structuredClone(TOURNAMENT_DATA.bracket)
+    : null
+
 };
-let manualSetupOpen = false;
 
-function emptyMatch(extra){
-  return Object.assign({
-    p1:null,p2:null,ref1:null,ref2:null,
-    score1:null,score2:null,winner:null,
-    penalties:false,penWinner:null,bo3:false,games:[]
-  }, extra||{});
-}
 
-function shuffle(arr){
-  const a = [...arr];
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+/*
+ * ------------------------------------------------------------
+ * CONSTANTS
+ * ------------------------------------------------------------
+ */
+
+const ROUND_ORDER = [
+  "prelim",
+  "r16",
+  "qf",
+  "sf",
+  "final"
+];
+
+
+/*
+ * ------------------------------------------------------------
+ * HELPERS
+ * ------------------------------------------------------------
+ */
+
+function el(tag, attrs, children){
+
+  const node = document.createElement(tag);
+
+  if(attrs){
+
+    Object.entries(attrs).forEach(([key,value]) => {
+
+      if(key === "class"){
+        node.className = value;
+      }
+      else if(key === "text"){
+        node.textContent = value;
+      }
+      else{
+        node.setAttribute(key,value);
+      }
+
+    });
+
   }
-  return a;
+
+  if(children){
+
+    children.forEach(child => {
+
+      if(child !== null && child !== undefined){
+        node.appendChild(
+          typeof child === "string"
+            ? document.createTextNode(child)
+            : child
+        );
+      }
+
+    });
+
+  }
+
+  return node;
 }
 
-function getBracketShape(total){
-  const prelimCount = Math.max(0, (total - 16) * 2);
-  const feedMatches = prelimCount / 2;
-  const byeCount = total - prelimCount;
-  const remainingByesCount = byeCount - feedMatches;
-  return { prelimCount, feedMatches, byeCount, remainingByesCount };
+
+function txt(value){
+  return document.createTextNode(
+    value === null || value === undefined
+      ? ""
+      : String(value)
+  );
 }
 
-function assembleBracket(prelimPairs, feedByes, directByePairs){
-  const prelim = prelimPairs.map(([a,b]) => emptyMatch({p1:a, p2:b}));
-  const r16 = [];
-  feedByes.forEach((bye,i) => r16.push(emptyMatch({p1:bye, ref2:{round:'prelim',idx:i}})));
-  directByePairs.forEach(([a,b]) => r16.push(emptyMatch({p1:a, p2:b})));
-  const qf = [0,2,4,6].map(i => emptyMatch({ref1:{round:'r16',idx:i}, ref2:{round:'r16',idx:i+1}}));
-  const sf = [0,2].map(i => emptyMatch({ref1:{round:'qf',idx:i}, ref2:{round:'qf',idx:i+1}, bo3:true}));
-  const final = [emptyMatch({ref1:{round:'sf',idx:0}, ref2:{round:'sf',idx:1}, bo3:true})];
-  const third = [emptyMatch({ref1:{round:'sf',idx:0,loser:true}, ref2:{round:'sf',idx:1,loser:true}})];
-  return { prelim, r16, qf, sf, final, third };
+
+/*
+ * ------------------------------------------------------------
+ * MATCH HELPERS
+ * ------------------------------------------------------------
+ */
+
+function getWinner(match){
+
+  if(!match){
+    return null;
+  }
+
+  if(match.winner){
+    return match.winner;
+  }
+
+  if(match.penWinner){
+    return match.penWinner;
+  }
+
+  return null;
 }
 
-function drawBracket(players){
-  const total = players.length;
-  const { feedMatches } = getBracketShape(total);
-  const shuffled = shuffle(players);
-  const prelimPlayers = shuffled.slice(0, feedMatches*2);
-  const byePlayers = shuffled.slice(feedMatches*2, total);
-  const prelimPairs = [];
-  for(let i=0;i<feedMatches;i++) prelimPairs.push([prelimPlayers[i*2], prelimPlayers[i*2+1]]);
-  const feedByes = byePlayers.slice(0, feedMatches);
-  const remainingByes = byePlayers.slice(feedMatches);
-  const directByePairs = [];
-  for(let i=0;i<remainingByes.length;i+=2) directByePairs.push([remainingByes[i], remainingByes[i+1]]);
-  return assembleBracket(prelimPairs, feedByes, directByePairs);
+
+function getLoser(match){
+
+  if(!match){
+    return null;
+  }
+
+  const winner = getWinner(match);
+
+  if(!winner){
+    return null;
+  }
+
+  const p1 = match.p1eff || match.p1;
+  const p2 = match.p2eff || match.p2;
+
+  if(winner === p1){
+    return p2;
+  }
+
+  if(winner === p2){
+    return p1;
+  }
+
+  return null;
 }
 
-function resolveName(bracket, slotVal, ref){
-  if(slotVal) return slotVal;
-  if(!ref) return null;
-  const m = bracket[ref.round][ref.idx];
-  if(!m) return null;
+
+function resolveRef(bracket, ref){
+
+  if(!ref){
+    return null;
+  }
+
+  const round = bracket[ref.round];
+
+  if(!round){
+    return null;
+  }
+
+  const match = round[ref.idx];
+
+  if(!match){
+    return null;
+  }
+
   if(ref.loser){
-    if(!m.winner) return null;
-    return m.winner === m.p1eff ? m.p2eff : m.p1eff;
+    return getLoser(match);
   }
-  return m.winner || null;
+
+  return getWinner(match);
 }
+
+
+function resolvePlayer(bracket, match, key, refKey){
+
+  if(match[key]){
+    return match[key];
+  }
+
+  if(match[refKey]){
+    return resolveRef(bracket,match[refKey]);
+  }
+
+  return null;
+}
+
 
 function annotate(bracket){
-  ROUND_ORDER.concat(['third']).forEach(r=>{
-    if(!bracket[r]) return;
-    bracket[r].forEach(m=>{
-      m.p1eff = m.p1 || resolveName(bracket, null, m.ref1);
-      m.p2eff = m.p2 || resolveName(bracket, null, m.ref2);
+
+  if(!bracket){
+    return bracket;
+  }
+
+  const rounds = [
+    "prelim",
+    "r16",
+    "qf",
+    "sf",
+    "final",
+    "third"
+  ];
+
+  rounds.forEach(roundName => {
+
+    if(!bracket[roundName]){
+      return;
+    }
+
+    bracket[roundName].forEach(match => {
+
+      match.p1eff = resolvePlayer(
+        bracket,
+        match,
+        "p1",
+        "ref1"
+      );
+
+      match.p2eff = resolvePlayer(
+        bracket,
+        match,
+        "p2",
+        "ref2"
+      );
+
     });
+
   });
+
   return bracket;
 }
 
-function save(){
-  // Static/public mode: editing is done by changing tournament-data.js in GitHub.
-  // Nothing is persisted in the viewer's browser.
-}
 
-function load(){
-  state.bracket = state.bracket ? annotate(state.bracket) : null;
-  render();
-}
+/*
+ * ------------------------------------------------------------
+ * ROUND NAMES
+ * ------------------------------------------------------------
+ */
 
-function currentStage(){
-  if(!state.bracket) return null;
-  const order = ['prelim','r16','qf','sf','final'];
-  for(const r of order){
-    if(state.bracket[r].some(m => !m.winner)) return r;
-  }
-  return 'done';
-}
+function roundTitle(round){
 
-function el(tag, attrs, children){
-  const e = document.createElement(tag);
-  if(attrs) Object.entries(attrs).forEach(([k,v])=>{
-    if(k==='class') e.className=v;
-    else if(k==='html') e.innerHTML=v;
-    else e.setAttribute(k,v);
-  });
-  (children||[]).forEach(c=>{ if(c) e.appendChild(c); });
-  return e;
-}
-function txt(t){ return document.createTextNode(t); }
+  const titles = {
 
-function renderStageRail(container){
-  const rail = el('div',{class:'stage-rail'});
-  const stage = currentStage();
-  const order = ['prelim','r16','qf','sf','final'];
-  order.forEach(r=>{
-    let cls = '';
-    if(stage==='done') cls='done';
-    else if(r===stage) cls='active';
-    else if(stage && order.indexOf(r) < order.indexOf(stage)) cls='done';
-    rail.appendChild(el('div',{class:cls},[txt(ROUND_LABELS[r])]));
-  });
-  container.appendChild(rail);
-}
+    prelim:"PRELIMINARY",
+    r16:"ROUND OF 16",
+    qf:"QUARTER FINALS",
+    sf:"SEMI FINALS",
+    final:"FINAL",
+    third:"THIRD PLACE"
 
-function renderRoster(container){
-  const panel = el('div',{class:'roster-panel'});
-  const headerRow = el('div',{style:'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;'});
-  headerRow.appendChild(el('h2',{style:'margin:0;'},[txt('Roster — '+state.players.length+' players')]));
-  const addBtn = el('button',{style:'font-size:12px;padding:6px 12px;'},[txt('+ Add player')]);
-  addBtn.addEventListener('click', ()=>{
-    state.players.push('Player '+(state.players.length+1));
-    save(); render();
-  });
-  headerRow.appendChild(addBtn);
-  panel.appendChild(headerRow);
-
-  const shape = getBracketShape(state.players.length);
-  const hintText = shape.feedMatches
-    ? ('Edit names below, then draw the bracket. Draw is random: '+(shape.feedMatches*2)+' players play a preliminary round, '+shape.byeCount+' get a bye straight to the Round of 16. Semifinals and the Final are best of 3.')
-    : 'Edit names below, then draw the bracket. Semifinals and the Final are best of 3.';
-  panel.appendChild(el('p',{class:'hint'},[txt(hintText)]));
-  const grid = el('div',{class:'roster-grid'});
-  state.players.forEach((name, idx)=>{
-    const wrap = el('div',{});
-    wrap.appendChild(el('label',{},[txt('Player '+(idx+1))]));
-    const row = el('div',{style:'display:flex;gap:6px;'});
-    const input = el('input',{value:name, 'data-idx':idx, style:'flex:1;'});
-    input.addEventListener('change', e=>{
-      state.players[idx] = e.target.value.trim() || ('Player '+(idx+1));
-      save();
-    });
-    const removeBtn = el('button',{style:'padding:0 10px;font-size:13px;line-height:1;',title:'Remove player'},[txt('×')]);
-    removeBtn.addEventListener('click', ()=>{
-      if(state.players.length<=2){ alert('You need at least 2 players.'); return; }
-      state.players.splice(idx,1);
-      save(); render();
-    });
-    row.appendChild(input);
-    row.appendChild(removeBtn);
-    wrap.appendChild(row);
-    grid.appendChild(wrap);
-  });
-  panel.appendChild(grid);
-  container.appendChild(panel);
-}
-
-let manualAssign = null;
-
-function initManualAssign(){
-  const shape = getBracketShape(state.players.length);
-  manualAssign = {
-    prelim: Array.from({length: shape.feedMatches}, () => [null,null]),
-    feedByes: Array.from({length: shape.feedMatches}, () => null),
-    directPairs: Array.from({length: shape.remainingByesCount/2}, () => [null,null])
   };
+
+  return titles[round] || round.toUpperCase();
 }
 
-function manualFlatValues(){
-  if(!manualAssign) return [];
-  return [
-    ...manualAssign.prelim.flat(),
-    ...manualAssign.feedByes,
-    ...manualAssign.directPairs.flat()
-  ];
+
+/*
+ * ------------------------------------------------------------
+ * MATCH STATUS
+ * ------------------------------------------------------------
+ */
+
+function matchStatus(match){
+
+  if(!match){
+    return "";
+  }
+
+  if(match.winner){
+
+    if(match.penalties){
+      return "PENALTIES";
+    }
+
+    return "FINAL";
+  }
+
+  if(match.bo3){
+
+    if(Array.isArray(match.games) && match.games.length){
+
+      return "BEST OF 3";
+    }
+
+    return "BEST OF 3";
+  }
+
+  if(
+    match.score1 !== null &&
+    match.score1 !== undefined &&
+    match.score2 !== null &&
+    match.score2 !== undefined
+  ){
+
+    if(
+      Number(match.score1) === Number(match.score2) &&
+      match.penalties
+    ){
+      return "PENALTIES";
+    }
+
+    return "SCORE";
+  }
+
+  return "UPCOMING";
 }
 
-function playerSelect(currentVal, onChange){
-  const select = el('select',{});
-  select.appendChild(el('option',{value:''},[txt('— choose player —')]));
-  state.players.forEach(p=>{
-    const opt = el('option',{value:p},[txt(p)]);
-    select.appendChild(opt);
+
+/*
+ * ------------------------------------------------------------
+ * RENDER TEAM
+ * ------------------------------------------------------------
+ */
+
+function renderTeam(match, player, score, isWinner){
+
+  const row = el("div",{
+    class:"team"
   });
-  select.value = currentVal || '';
-  select.addEventListener('change', e=>{ onChange(e.target.value || null); render(); });
-  return select;
-}
 
-function renderManualSetup(container){
-  if(!manualAssign) initManualAssign();
-  const shape = getBracketShape(state.players.length);
-  const panel = el('div',{class:'roster-panel'});
-  panel.appendChild(el('h2',{},[txt('Manual bracket setup')]));
-  panel.appendChild(el('p',{class:'hint'},[txt('Assign every player to a slot below. '+shape.feedMatches+' play in the Preliminary Round, the rest enter the Round of 16 directly — either seeded against a preliminary winner, or paired straight against another direct entrant.')]));
-
-  const used = manualFlatValues().filter(Boolean);
-  const remaining = state.players.filter(p => !used.includes(p));
-  const status = el('div',{style:'font-size:12px;color:var(--muted);margin-bottom:16px;font-family:Space Mono,monospace;'},
-    [txt(remaining.length ? ('Unassigned ('+remaining.length+'): '+remaining.join(', ')) : 'All players assigned.')]);
-  panel.appendChild(status);
-
-  const grid = el('div',{style:'display:flex;flex-direction:column;gap:22px;'});
-
-  if(shape.feedMatches){
-    const sec = el('div',{});
-    sec.appendChild(el('div',{style:'font-family:Space Mono,monospace;font-size:11px;color:var(--grass);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;'},[txt('Preliminary Round')]));
-    const rows = el('div',{style:'display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;'});
-    manualAssign.prelim.forEach((pair, i)=>{
-      const box = el('div',{style:'background:var(--pitch-black);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;'});
-      box.appendChild(el('div',{style:'font-size:11px;color:var(--muted);'},[txt('Match '+(i+1))]));
-      box.appendChild(playerSelect(pair[0], v=>{ manualAssign.prelim[i][0]=v; }));
-      box.appendChild(playerSelect(pair[1], v=>{ manualAssign.prelim[i][1]=v; }));
-      rows.appendChild(box);
-    });
-    sec.appendChild(rows);
-    grid.appendChild(sec);
-  }
-
-  if(shape.feedMatches){
-    const sec = el('div',{});
-    sec.appendChild(el('div',{style:'font-family:Space Mono,monospace;font-size:11px;color:var(--grass);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;'},[txt('Round of 16 — seeded vs. preliminary winner')]));
-    const rows = el('div',{style:'display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;'});
-    manualAssign.feedByes.forEach((val, i)=>{
-      const box = el('div',{style:'background:var(--pitch-black);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;'});
-      box.appendChild(el('div',{style:'font-size:11px;color:var(--muted);'},[txt('Faces winner of Prelim Match '+(i+1))]));
-      box.appendChild(playerSelect(val, v=>{ manualAssign.feedByes[i]=v; }));
-      rows.appendChild(box);
-    });
-    sec.appendChild(rows);
-    grid.appendChild(sec);
-  }
-
-  if(manualAssign.directPairs.length){
-    const sec = el('div',{});
-    sec.appendChild(el('div',{style:'font-family:Space Mono,monospace;font-size:11px;color:var(--grass);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;'},[txt('Round of 16 — direct matches')]));
-    const rows = el('div',{style:'display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;'});
-    manualAssign.directPairs.forEach((pair, i)=>{
-      const box = el('div',{style:'background:var(--pitch-black);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;'});
-      box.appendChild(el('div',{style:'font-size:11px;color:var(--muted);'},[txt('Match '+(shape.feedMatches+i+1))]));
-      box.appendChild(playerSelect(pair[0], v=>{ manualAssign.directPairs[i][0]=v; }));
-      box.appendChild(playerSelect(pair[1], v=>{ manualAssign.directPairs[i][1]=v; }));
-      rows.appendChild(box);
-    });
-    sec.appendChild(rows);
-    grid.appendChild(sec);
-  }
-
-  panel.appendChild(grid);
-
-  const genBtn = el('button',{class:'primary',style:'margin-top:20px;'},[txt('Generate bracket from these picks')]);
-  genBtn.addEventListener('click', ()=>{
-    const flat = manualFlatValues();
-    if(flat.some(v=>!v)){ alert('Every slot needs a player before you can generate the bracket.'); return; }
-    const counts = {};
-    flat.forEach(p=>{ counts[p]=(counts[p]||0)+1; });
-    const dupes = Object.keys(counts).filter(p=>counts[p]>1);
-    if(dupes.length){ alert('These players are assigned to more than one slot: '+dupes.join(', ')); return; }
-    const missing = state.players.filter(p=>!flat.includes(p));
-    if(missing.length){ alert('These players have not been assigned yet: '+missing.join(', ')); return; }
-
-    state.bracket = annotate(assembleBracket(manualAssign.prelim, manualAssign.feedByes, manualAssign.directPairs));
-    manualSetupOpen = false;
-    manualAssign = null;
-    save(); render();
+  const name = el("div",{
+    class:"team-name" +
+      (isWinner ? " winner" : "")
   });
-  panel.appendChild(genBtn);
 
-  container.appendChild(panel);
-}
+  name.textContent = player || "TBD";
 
-function renderToolbar(container){
-  const bar = el('div',{class:'toolbar'});
-  const drawBtn = el('button',{class:'primary'},[txt(state.bracket ? 'Redraw randomly' : 'Draw random bracket')]);
-  drawBtn.addEventListener('click', ()=>{
-    if(state.players.length<16){ alert('This bracket format needs at least 16 players. Add more players to the roster first.'); return; }
-    if(state.bracket && !confirm('This clears all current scores and redraws the bracket. Continue?')) return;
-    manualSetupOpen = false;
-    state.bracket = annotate(drawBracket(state.players));
-    save(); render();
+  const scoreNode = el("div",{
+    class:"score"
   });
-  bar.appendChild(drawBtn);
 
-  if(!state.bracket){
-    const manualBtn = el('button',{},[txt(manualSetupOpen ? 'Cancel manual setup' : 'Set up bracket manually')]);
-    manualBtn.addEventListener('click', ()=>{
-      if(!manualSetupOpen && state.players.length<16){ alert('This bracket format needs at least 16 players. Add more players to the roster first.'); return; }
-      manualSetupOpen = !manualSetupOpen;
-      if(manualSetupOpen) initManualAssign();
-      else manualAssign = null;
-      render();
-    });
-    bar.appendChild(manualBtn);
+  if(
+    score !== null &&
+    score !== undefined
+  ){
+
+    scoreNode.textContent = score;
+
+  }
+  else{
+
+    scoreNode.textContent = "–";
+
   }
 
-  if(state.bracket){
-    const editBtn = el('button',{},[txt('Edit bracket manually')]);
-    editBtn.addEventListener('click', ()=>{
-      if(!confirm('This clears all current scores so you can re-seed the bracket by hand. Continue?')) return;
-      state.bracket = null;
-      manualSetupOpen = true;
-      initManualAssign();
-      save(); render();
-    });
-    bar.appendChild(editBtn);
+  row.appendChild(name);
+  row.appendChild(scoreNode);
 
-    const resetBtn = el('button',{class:'danger'},[txt('Reset tournament')]);
-    resetBtn.addEventListener('click', ()=>{
-      if(!confirm('This deletes the bracket and all scores. Roster names are kept. Continue?')) return;
-      state.bracket = null;
-      manualSetupOpen = false;
-      save(); render();
-    });
-    bar.appendChild(resetBtn);
+  return row;
+}
+
+
+/*
+ * ------------------------------------------------------------
+ * RENDER GAMES
+ * ------------------------------------------------------------
+ */
+
+function renderGames(match){
+
+  if(
+    !match.bo3 ||
+    !Array.isArray(match.games) ||
+    !match.games.length
+  ){
+
+    return null;
   }
-  container.appendChild(bar);
-}
 
-function makeSlot(name, isWinner, isTbd){
-  const cls = 'slot' + (isWinner?' winner':'') + (isTbd?' tbd':(name?'':' empty'));
-  return el('div',{class:cls},[el('span',{class:'name'},[txt(name || 'TBD')])]);
-}
+  const container = el("div",{
+    class:"games"
+  });
 
-function buildScoreRow(label, name, isWinner, isTbd, disabled, initialVal){
-  const row = el('div',{style:'display:flex;align-items:center;gap:8px;'});
-  row.appendChild(makeSlot(name, isWinner, isTbd));
-  const box = el('input',{type:'number',class:'score-box',min:'0'});
-  box.value = initialVal!==null && initialVal!==undefined ? initialVal : '';
-  if(disabled) box.disabled = true;
-  row.appendChild(box);
-  return {row, box};
-}
+  const p1Name = match.p1eff || match.p1 || "TBD";
+  const p2Name = match.p2eff || match.p2 || "TBD";
 
-function renderMatchCard(round, idx, extraClass){
-  const bracket = state.bracket;
-  const m = bracket[round][idx];
-  const card = el('div',{class:'match'+(m.winner?' decided':'')+(extraClass?(' '+extraClass):'')});
+  match.games.forEach((game,index) => {
 
-  const p1Name = m.p1eff, p2Name = m.p2eff;
-  const p1tbd = !m.p1 && !p1Name, p2tbd = !m.p2 && !p2Name;
-  const bothKnown = p1Name && p2Name;
+    let text =
+      "Game " +
+      (index + 1) +
+      ": " +
+      game.score1 +
+      "-" +
+      game.score2;
 
-  if(!m.bo3){
-    const r1 = buildScoreRow(null,p1Name, m.winner===p1Name, p1tbd, !bothKnown, m.score1);
-    const r2 = buildScoreRow(null,p2Name, m.winner===p2Name, p2tbd, !bothKnown, m.score2);
-    card.appendChild(r1.row);
-    card.appendChild(el('div',{class:'vs-divider'}));
-    card.appendChild(r2.row);
+    if(game.pen){
 
-    if(bothKnown){
-      const actions = el('div',{class:'match-actions'});
-      let penSelect = null;
-      const scoresEqual = ()=> r1.box.value !== '' && r2.box.value !== '' && Number(r1.box.value)===Number(r2.box.value);
-      const rebuildPenSelect = ()=>{
-        if(penSelect){ penSelect.remove(); penSelect=null; }
-        if(scoresEqual()){
-          penSelect = el('select',{});
-          penSelect.appendChild(el('option',{value:''},[txt('Penalties winner…')]));
-          penSelect.appendChild(el('option',{value:p1Name},[txt(p1Name)]));
-          penSelect.appendChild(el('option',{value:p2Name},[txt(p2Name)]));
-          if(m.penWinner) penSelect.value = m.penWinner;
-          actions.insertBefore(penSelect, actions.firstChild);
-        }
-      };
-      r1.box.addEventListener('input', rebuildPenSelect);
-      r2.box.addEventListener('input', rebuildPenSelect);
-      rebuildPenSelect();
+      text += " (pens";
 
-      const saveBtn = el('button',{class:'save-btn primary'},[txt(m.winner ? 'Update' : 'Save score')]);
-      saveBtn.addEventListener('click', ()=>{
-        const v1 = r1.box.value===''?null:Number(r1.box.value);
-        const v2 = r2.box.value===''?null:Number(r2.box.value);
-        if(v1===null || v2===null){ alert('Enter both scores.'); return; }
-        let winner;
-        if(v1>v2) winner = p1Name;
-        else if(v2>v1) winner = p2Name;
-        else{
-          const pw = penSelect ? penSelect.value : '';
-          if(!pw){ alert('Scores are tied — pick a penalties winner.'); return; }
-          winner = pw; m.penalties = true; m.penWinner = pw;
-        }
-        if(v1!==v2){ m.penalties=false; m.penWinner=null; }
-        m.score1=v1; m.score2=v2; m.winner=winner;
-        state.bracket = annotate(state.bracket);
-        save(); render();
-      });
-      actions.appendChild(saveBtn);
-      card.appendChild(actions);
-      if(m.penalties && m.winner){
-        const penScore = (m.penaltyScore1 !== null && m.penaltyScore1 !== undefined &&
-                          m.penaltyScore2 !== null && m.penaltyScore2 !== undefined)
-          ? (' · Shootout '+m.penaltyScore1+'–'+m.penaltyScore2)
-          : '';
-        card.appendChild(el('div',{class:'pen-note'},[txt('Won on penalties'+penScore)]));
+      if(
+        game.penaltyScore1 !== undefined &&
+        game.penaltyScore2 !== undefined
+      ){
+
+        text +=
+          " " +
+          game.penaltyScore1 +
+          "–" +
+          game.penaltyScore2;
+
       }
+
+      text += ")";
+
     }
-    return card;
+
+    if(game.winnerSide){
+
+      text +=
+        " → " +
+        (
+          game.winnerSide === "p1"
+            ? p1Name
+            : p2Name
+        );
+
+    }
+
+    const gameNode = el("div",{
+      class:"game"
+    });
+
+    gameNode.textContent = text;
+
+    container.appendChild(gameNode);
+
+  });
+
+  return container;
+}
+
+
+/*
+ * ------------------------------------------------------------
+ * RENDER MATCH
+ * ------------------------------------------------------------
+ */
+
+function renderMatch(match,index,round){
+
+  if(!match){
+    return el("div",{
+      class:"empty",
+      text:"NO MATCH"
+    });
   }
 
-  // Best-of-3 series (semis + final)
-  const wins1 = m.games.filter(g=>g.winnerSide==='p1').length;
-  const wins2 = m.games.filter(g=>g.winnerSide==='p2').length;
+  const card = el("div",{
+    class:"match"
+  });
 
-  const nameRow = el('div',{style:'display:flex;align-items:center;justify-content:space-between;gap:8px;'});
-  nameRow.appendChild(makeSlot(p1Name, m.winner===p1Name, p1tbd));
-  nameRow.appendChild(el('span',{style:'font-family:Space Mono,monospace;font-weight:700;color:var(--amber);font-size:13px;'},[txt(bothKnown?(wins1+' – '+wins2):'')]));
-  card.appendChild(nameRow);
-  const nameRow2 = el('div',{});
-  nameRow2.appendChild(makeSlot(p2Name, m.winner===p2Name, p2tbd));
-  card.appendChild(nameRow2);
-  card.appendChild(el('div',{class:'vs-divider'}));
 
-  if(bothKnown){
-    if(m.games.length){
-      const list = el('div',{style:'display:flex;flex-direction:column;gap:4px;margin-bottom:8px;'});
-      m.games.forEach((g,gi)=>{
-        list.appendChild(el('div',{style:'font-size:11px;color:var(--muted);font-family:Space Mono,monospace;'},
-          [txt('Game '+(gi+1)+': '+g.score1+'-'+g.score2+
-            (g.pen ? ' (pens'+
-              ((g.penaltyScore1 !== undefined && g.penaltyScore2 !== undefined)
-                ? ' '+g.penaltyScore1+'–'+g.penaltyScore2 : '')+
-              ')' : '')+
-            ' → '+(g.winnerSide==='p1'?p1Name:p2Name))]));
-      });
-      card.appendChild(list);
+  /*
+   * HEADER
+   */
+
+  const header = el("div",{
+    class:"match-head"
+  });
+
+  const label = el("div",{
+    class:"match-label"
+  });
+
+  label.textContent =
+    roundTitle(round) +
+    " · MATCH " +
+    (index + 1);
+
+  const status = el("div",{
+    class:"match-status"
+  });
+
+  status.textContent =
+    matchStatus(match);
+
+  header.appendChild(label);
+  header.appendChild(status);
+
+  card.appendChild(header);
+
+
+  /*
+   * PLAYERS
+   */
+
+  const p1 = match.p1eff || match.p1;
+  const p2 = match.p2eff || match.p2;
+
+  const winner = getWinner(match);
+
+  card.appendChild(
+    renderTeam(
+      match,
+      p1,
+      match.score1,
+      winner === p1
+    )
+  );
+
+  card.appendChild(
+    renderTeam(
+      match,
+      p2,
+      match.score2,
+      winner === p2
+    )
+  );
+
+
+  /*
+   * PENALTY INFORMATION
+   */
+
+  if(match.penalties && winner){
+
+    let penaltyText =
+      "Won on penalties";
+
+    if(
+      match.penaltyScore1 !== null &&
+      match.penaltyScore1 !== undefined &&
+      match.penaltyScore2 !== null &&
+      match.penaltyScore2 !== undefined
+    ){
+
+      penaltyText +=
+        " · Shootout " +
+        match.penaltyScore1 +
+        "–" +
+        match.penaltyScore2;
+
     }
 
-    if(!m.winner){
-      const gr1 = buildScoreRow(null,null,false,false,false,null);
-      const gr2 = buildScoreRow(null,null,false,false,false,null);
-      gr1.row.style.marginBottom='2px';
-      const label = el('div',{style:'font-size:10px;color:var(--muted);font-family:Space Mono,monospace;margin-bottom:4px;'},[txt('Game '+(m.games.length+1)+' score')]);
-      card.appendChild(label);
-      card.appendChild(gr1.row);
-      card.appendChild(gr2.row);
+    const penNote = el("div",{
+      class:"pen-note"
+    });
 
-      const actions = el('div',{class:'match-actions'});
-      let penSelect = null;
-      const scoresEqual = ()=> gr1.box.value !== '' && gr2.box.value !== '' && Number(gr1.box.value)===Number(gr2.box.value);
-      const rebuildPenSelect = ()=>{
-        if(penSelect){ penSelect.remove(); penSelect=null; }
-        if(scoresEqual()){
-          penSelect = el('select',{});
-          penSelect.appendChild(el('option',{value:''},[txt('Penalties winner…')]));
-          penSelect.appendChild(el('option',{value:'p1'},[txt(p1Name)]));
-          penSelect.appendChild(el('option',{value:'p2'},[txt(p2Name)]));
-          actions.insertBefore(penSelect, actions.firstChild);
-        }
-      };
-      gr1.box.addEventListener('input', rebuildPenSelect);
-      gr2.box.addEventListener('input', rebuildPenSelect);
+    penNote.textContent = penaltyText;
 
-      const saveBtn = el('button',{class:'save-btn primary'},[txt('Save game')]);
-      saveBtn.addEventListener('click', ()=>{
-        const v1 = gr1.box.value===''?null:Number(gr1.box.value);
-        const v2 = gr2.box.value===''?null:Number(gr2.box.value);
-        if(v1===null || v2===null){ alert('Enter both scores.'); return; }
-        let winnerSide, pen=false;
-        if(v1>v2) winnerSide='p1';
-        else if(v2>v1) winnerSide='p2';
-        else{
-          const pw = penSelect ? penSelect.value : '';
-          if(!pw){ alert('Scores are tied — pick a penalties winner for this game.'); return; }
-          winnerSide = pw; pen = true;
-        }
-        m.games.push({score1:v1, score2:v2, winnerSide, pen});
-        const w1 = m.games.filter(g=>g.winnerSide==='p1').length;
-        const w2 = m.games.filter(g=>g.winnerSide==='p2').length;
-        if(w1===2) m.winner = p1Name;
-        else if(w2===2) m.winner = p2Name;
-        state.bracket = annotate(state.bracket);
-        save(); render();
-      });
-      actions.appendChild(saveBtn);
-      card.appendChild(actions);
-    }
+    card.appendChild(penNote);
+
   }
+
+
+  /*
+   * BEST OF 3 GAMES
+   */
+
+  const games = renderGames(match);
+
+  if(games){
+    card.appendChild(games);
+  }
+
 
   return card;
 }
 
-function renderBracket(container){
-  const bracket = state.bracket;
-  const wrap = el('div',{class:'bracket'});
-  ROUND_ORDER.forEach(round=>{
-    const col = el('div',{class:'round-col'});
-    col.appendChild(el('h3',{},[txt(ROUND_LABELS[round])]));
-    const matchesWrap = el('div',{class:'matches'});
-    bracket[round].forEach((m,idx)=>{ matchesWrap.appendChild(renderMatchCard(round, idx)); });
-    col.appendChild(matchesWrap);
-    wrap.appendChild(col);
+
+/*
+ * ------------------------------------------------------------
+ * RENDER ROUND
+ * ------------------------------------------------------------
+ */
+
+function renderRound(roundName){
+
+  const column = el("div",{
+    class:"round"
   });
-  container.appendChild(wrap);
 
-  const finalM = bracket.final[0];
-  if(finalM.winner){
-    const banner = el('div',{class:'final-banner'});
-    banner.appendChild(el('div',{class:'cup'},[txt('🏆')]));
-    banner.appendChild(el('div',{class:'label'},[txt('Tournament champion')]));
-    banner.appendChild(el('div',{class:'champ'},[txt(finalM.winner)]));
-    container.appendChild(banner);
+  const title = el("div",{
+    class:"round-head"
+  });
+
+  title.textContent =
+    roundTitle(roundName);
+
+  column.appendChild(title);
+
+
+  const matches =
+    state.bracket &&
+    state.bracket[roundName]
+      ? state.bracket[roundName]
+      : [];
+
+
+  if(!matches.length){
+
+    column.appendChild(
+      el("div",{
+        class:"empty",
+        text:"NO MATCHES"
+      })
+    );
+
+    return column;
   }
 
-  const sfDone = bracket.sf.every(m=>m.winner);
-  if(sfDone){
-    const tp = el('div',{class:'third-place'});
-    tp.appendChild(el('h3',{},[txt('3rd place playoff (optional)')]));
-    tp.appendChild(renderMatchCard('third',0));
-    container.appendChild(tp);
-  }
+
+  matches.forEach((match,index) => {
+
+    column.appendChild(
+      renderMatch(
+        match,
+        index,
+        roundName
+      )
+    );
+
+  });
+
+
+  return column;
 }
+
+
+/*
+ * ------------------------------------------------------------
+ * RENDER CHAMPION
+ * ------------------------------------------------------------
+ */
+
+function renderChampion(){
+
+  if(
+    !state.bracket ||
+    !state.bracket.final ||
+    !state.bracket.final.length
+  ){
+
+    return null;
+  }
+
+  const finalMatch =
+    state.bracket.final[0];
+
+  const winner =
+    getWinner(finalMatch);
+
+  if(!winner){
+    return null;
+  }
+
+  const box = el("div",{
+    class:"champion"
+  });
+
+  const label = el("div",{
+    class:"label"
+  });
+
+  label.textContent =
+    "🏆 TOURNAMENT CHAMPION";
+
+  const name = el("div",{
+    class:"name"
+  });
+
+  name.textContent = winner;
+
+  box.appendChild(label);
+  box.appendChild(name);
+
+  return box;
+}
+
+
+/*
+ * ------------------------------------------------------------
+ * RENDER
+ * ------------------------------------------------------------
+ */
 
 function render(){
-  const app = document.getElementById('app');
-  app.innerHTML = '';
 
-  const header = el('header',{});
-  const brand = el('div',{class:'brand'});
-  brand.appendChild(el('div',{class:'eyebrow'},[txt(state.players.length+' players · single elimination · SF/Final best of 3')]));
-  brand.appendChild(el('h1',{},[txt('FIFA '),el('span',{},[txt('Knockout')])]));
-  header.appendChild(brand);
-  renderStageRail(header);
-  app.appendChild(header);
+  const app =
+    document.getElementById("app");
 
-  renderToolbar(app);
+  app.innerHTML = "";
+
 
   if(!state.bracket){
-    renderRoster(app);
-    if(manualSetupOpen){
-      renderManualSetup(app);
-    }else{
-      const cta = el('div',{class:'empty-cta'});
-      cta.appendChild(el('p',{},[txt('No bracket yet. Check your roster above, then draw randomly or set up the bracket by hand.')]));
-      app.appendChild(cta);
-    }
-  }else{
-    renderBracket(app);
+
+    app.appendChild(
+      el("div",{
+        class:"empty",
+        text:"Tournament data is not available."
+      })
+    );
+
+    return;
   }
 
-  const foot = el('footer',{});
-  foot.appendChild(txt('Public viewer · Read-only. Edit tournament-data.js in GitHub to update the published tournament.'));
-  app.appendChild(foot);
+
+  state.bracket =
+    annotate(state.bracket);
+
+
+  /*
+   * PRELIMINARY
+   */
+
+  if(
+    state.bracket.prelim &&
+    state.bracket.prelim.length
+  ){
+
+    const section =
+      el("section");
+
+    const title =
+      el("div",{
+        class:"section-title"
+      });
+
+    title.appendChild(
+      el("h2",{
+        text:"KNOCKOUT BRACKET"
+      })
+    );
+
+    title.appendChild(
+      el("span",{
+        text:"LIVE RESULTS"
+      })
+    );
+
+    section.appendChild(title);
+
+
+    const bracket =
+      el("div",{
+        class:"bracket"
+      });
+
+    const rounds =
+      el("div",{
+        class:"rounds"
+      });
+
+
+    [
+      "prelim",
+      "r16",
+      "qf",
+      "sf",
+      "final"
+    ].forEach(round => {
+
+      rounds.appendChild(
+        renderRound(round)
+      );
+
+    });
+
+
+    bracket.appendChild(rounds);
+    section.appendChild(bracket);
+
+    app.appendChild(section);
+
+  }
+  else{
+
+    const section =
+      el("section");
+
+    const title =
+      el("div",{
+        class:"section-title"
+      });
+
+    title.appendChild(
+      el("h2",{
+        text:"KNOCKOUT BRACKET"
+      })
+    );
+
+    section.appendChild(title);
+
+    const bracket =
+      el("div",{
+        class:"bracket"
+      });
+
+    const rounds =
+      el("div",{
+        class:"rounds"
+      });
+
+
+    [
+      "r16",
+      "qf",
+      "sf",
+      "final"
+    ].forEach(round => {
+
+      rounds.appendChild(
+        renderRound(round)
+      );
+
+    });
+
+
+    bracket.appendChild(rounds);
+    section.appendChild(bracket);
+
+    app.appendChild(section);
+
+  }
+
+
+  /*
+   * THIRD PLACE
+   */
+
+  if(
+    state.bracket.third &&
+    state.bracket.third.length
+  ){
+
+    const section =
+      el("section");
+
+    const title =
+      el("div",{
+        class:"section-title"
+      });
+
+    title.appendChild(
+      el("h2",{
+        text:"THIRD PLACE"
+      })
+    );
+
+    section.appendChild(title);
+
+
+    const bracket =
+      el("div",{
+        class:"bracket"
+      });
+
+    const rounds =
+      el("div",{
+        class:"rounds"
+      });
+
+    rounds.appendChild(
+      renderRound("third")
+    );
+
+    bracket.appendChild(rounds);
+
+    section.appendChild(bracket);
+
+    app.appendChild(section);
+
+  }
+
+
+  /*
+   * CHAMPION
+   */
+
+  const champion =
+    renderChampion();
+
+  if(champion){
+    app.appendChild(champion);
+  }
+
+
+  /*
+   * ROSTER
+   */
+
+  if(state.players.length){
+
+    const panel =
+      el("div",{
+        class:"roster-panel"
+      });
+
+    const title =
+      el("div",{
+        class:"section-title"
+      });
+
+    title.appendChild(
+      el("h2",{
+        text:"TOURNAMENT PLAYERS"
+      })
+    );
+
+    title.appendChild(
+      el("span",{
+        text:String(state.players.length) + " PLAYERS"
+      })
+    );
+
+    panel.appendChild(title);
+
+
+    const roster =
+      el("div",{
+        class:"roster-grid"
+      });
+
+
+    state.players.forEach(player => {
+
+      roster.appendChild(
+        el("div",{
+          class:"roster-player",
+          text:player
+        })
+      );
+
+    });
+
+
+    panel.appendChild(roster);
+
+    app.appendChild(panel);
+
+  }
+
 }
 
-document.body.classList.add('public-viewer');
-load();
+
+/*
+ * ------------------------------------------------------------
+ * REFRESH
+ * ------------------------------------------------------------
+ */
+
+document
+  .getElementById("refreshBtn")
+  .addEventListener("click",() => {
+
+    window.location.reload();
+
+  });
+
+
+/*
+ * ------------------------------------------------------------
+ * INITIALIZE
+ * ------------------------------------------------------------
+ */
+
+if(
+  typeof TOURNAMENT_DATA === "undefined"
+){
+
+  document
+    .getElementById("app")
+    .innerHTML = `
+      <div class="empty">
+        ERROR: tournament-data.js could not be loaded.
+        <br><br>
+        Make sure <strong>tournament-data.js</strong>
+        is in the same GitHub folder as
+        <strong>index.html</strong>.
+      </div>
+  `;
+
+}
+else{
+
+  state.bracket =
+    annotate(state.bracket);
+
+  render();
+
+}
+
 </script>
+
 </body>
 </html>
