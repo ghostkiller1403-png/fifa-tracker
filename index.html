@@ -117,8 +117,13 @@
     opacity:.65;
   }
   body.public-viewer .toolbar,
-  body.public-viewer .roster-panel{
+  body.public-viewer .roster-panel,
+  body.public-viewer .match-actions{
     display:none;
+  }
+  body.public-viewer .score-box{
+    pointer-events:none;
+    border-color:var(--line);
   }
 
   @media (max-width:640px){
@@ -133,38 +138,23 @@
   PUBLIC VIEW · READ ONLY
 </div>
 
+<script src="tournament-data.js"></script>
 <script>
-const STORAGE_KEY = 'fifa21-knockout-v2';
-const DEFAULT_PLAYERS = [
-  "Anirban Guha","Robert Gupta","Prakul Mishra","RajVardhan","Abhilash Naskar","Hodor",
-  "Karanbir Singh Dhoul","Rieshi Rao","Meet Gowsawmi","Adhyan Kumar","Chaitanya","Shubh Wadhwa",
-  "Jay Mishra","Kartikay Sharma","Kush Soni","Parimal Mishra","Siddhant Singh","Aryaman Singh",
-  "Tushar Singh","Hemant Agrawal","Shubham Kashyap","Varun Rathi","Nima"
-];
-
-const PRESET_PRELIM_PAIRS = [
-  ["Anirban Guha","Robert Gupta"],
-  ["Prakul Mishra","RajVardhan"],
-  ["Abhilash Naskar","Hodor"],
-  ["Karanbir Singh Dhoul","Rieshi Rao"],
-  ["Meet Gowsawmi","Adhyan Kumar"],
-  ["Chaitanya","Shubh Wadhwa"],
-  ["Jay Mishra","Kartikay Sharma"]
-];
-const PRESET_FEED_BYES = [
-  "Kush Soni","Parimal Mishra","Siddhant Singh","Aryaman Singh","Tushar Singh","Hemant Agrawal","Shubham Kashyap"
-];
-const PRESET_DIRECT_PAIRS = [
-  ["Varun Rathi","Nima"]
-];
-
-const ROUND_LABELS = {prelim:"Preliminary",r16:"Round of 16",qf:"Quarterfinals",sf:"Semifinals",final:"Final"};
-const ROUND_ORDER = ["prelim","r16","qf","sf","final"];
-
-let state = { players: [...DEFAULT_PLAYERS], bracket: null };
+// Tournament data is loaded from tournament-data.js.
+// Keep all editable tournament state in that file.
+let state = {
+  players: [...TOURNAMENT_DATA.players],
+  bracket: TOURNAMENT_DATA.bracket ? structuredClone(TOURNAMENT_DATA.bracket) : null
+};
 let manualSetupOpen = false;
 
-function emptyMatch(extra){ return Object.assign({p1:null,p2:null,ref1:null,ref2:null,score1:null,score2:null,winner:null,penalties:false,penWinner:null,bo3:false,games:[]}, extra||{}); }
+function emptyMatch(extra){
+  return Object.assign({
+    p1:null,p2:null,ref1:null,ref2:null,
+    score1:null,score2:null,winner:null,
+    penalties:false,penWinner:null,bo3:false,games:[]
+  }, extra||{});
+}
 
 function shuffle(arr){
   const a = [...arr];
@@ -185,16 +175,13 @@ function getBracketShape(total){
 
 function assembleBracket(prelimPairs, feedByes, directByePairs){
   const prelim = prelimPairs.map(([a,b]) => emptyMatch({p1:a, p2:b}));
-
   const r16 = [];
   feedByes.forEach((bye,i) => r16.push(emptyMatch({p1:bye, ref2:{round:'prelim',idx:i}})));
   directByePairs.forEach(([a,b]) => r16.push(emptyMatch({p1:a, p2:b})));
-
   const qf = [0,2,4,6].map(i => emptyMatch({ref1:{round:'r16',idx:i}, ref2:{round:'r16',idx:i+1}}));
   const sf = [0,2].map(i => emptyMatch({ref1:{round:'qf',idx:i}, ref2:{round:'qf',idx:i+1}, bo3:true}));
   const final = [emptyMatch({ref1:{round:'sf',idx:0}, ref2:{round:'sf',idx:1}, bo3:true})];
   const third = [emptyMatch({ref1:{round:'sf',idx:0,loser:true}, ref2:{round:'sf',idx:1,loser:true}})];
-
   return { prelim, r16, qf, sf, final, third };
 }
 
@@ -204,15 +191,12 @@ function drawBracket(players){
   const shuffled = shuffle(players);
   const prelimPlayers = shuffled.slice(0, feedMatches*2);
   const byePlayers = shuffled.slice(feedMatches*2, total);
-
   const prelimPairs = [];
   for(let i=0;i<feedMatches;i++) prelimPairs.push([prelimPlayers[i*2], prelimPlayers[i*2+1]]);
-
   const feedByes = byePlayers.slice(0, feedMatches);
   const remainingByes = byePlayers.slice(feedMatches);
   const directByePairs = [];
   for(let i=0;i<remainingByes.length;i+=2) directByePairs.push([remainingByes[i], remainingByes[i+1]]);
-
   return assembleBracket(prelimPairs, feedByes, directByePairs);
 }
 
@@ -239,29 +223,13 @@ function annotate(bracket){
   return bracket;
 }
 
-async function save(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }catch(e){ console.error('save failed', e); }
+function save(){
+  // Static/public mode: editing is done by changing tournament-data.js in GitHub.
+  // Nothing is persisted in the viewer's browser.
 }
 
-async function load(){
-  let loadedFromStorage = false;
-  try{
-    const stored = localStorage.getItem(STORAGE_KEY);
-      if(stored){
-       const parsed = JSON.parse(stored);
-      state.players = parsed.players || state.players;
-      state.bracket = parsed.bracket || null;
-      loadedFromStorage = true;
-    }
-  }catch(e){ /* no data yet */ }
-
-  if(!loadedFromStorage){
-    // First run: seed with the preset lineup/bracket instead of a blank roster.
-    state.bracket = annotate(assembleBracket(PRESET_PRELIM_PAIRS, PRESET_FEED_BYES, PRESET_DIRECT_PAIRS));
-    save();
-  }
+function load(){
+  state.bracket = state.bracket ? annotate(state.bracket) : null;
   render();
 }
 
@@ -573,7 +541,13 @@ function renderMatchCard(round, idx, extraClass){
       });
       actions.appendChild(saveBtn);
       card.appendChild(actions);
-      if(m.penalties && m.winner) card.appendChild(el('div',{class:'pen-note'},[txt('Won on penalties')]));
+      if(m.penalties && m.winner){
+        const penScore = (m.penaltyScore1 !== null && m.penaltyScore1 !== undefined &&
+                          m.penaltyScore2 !== null && m.penaltyScore2 !== undefined)
+          ? (' · Shootout '+m.penaltyScore1+'–'+m.penaltyScore2)
+          : '';
+        card.appendChild(el('div',{class:'pen-note'},[txt('Won on penalties'+penScore)]));
+      }
     }
     return card;
   }
@@ -596,7 +570,12 @@ function renderMatchCard(round, idx, extraClass){
       const list = el('div',{style:'display:flex;flex-direction:column;gap:4px;margin-bottom:8px;'});
       m.games.forEach((g,gi)=>{
         list.appendChild(el('div',{style:'font-size:11px;color:var(--muted);font-family:Space Mono,monospace;'},
-          [txt('Game '+(gi+1)+': '+g.score1+'-'+g.score2+(g.pen?' (pens)':'')+' → '+(g.winnerSide==='p1'?p1Name:p2Name))]));
+          [txt('Game '+(gi+1)+': '+g.score1+'-'+g.score2+
+            (g.pen ? ' (pens'+
+              ((g.penaltyScore1 !== undefined && g.penaltyScore2 !== undefined)
+                ? ' '+g.penaltyScore1+'–'+g.penaltyScore2 : '')+
+              ')' : '')+
+            ' → '+(g.winnerSide==='p1'?p1Name:p2Name))]));
       });
       card.appendChild(list);
     }
@@ -714,7 +693,7 @@ function render(){
   }
 
   const foot = el('footer',{});
-  foot.appendChild(txt('Public viewer · The published page is read-only to visitors.'));
+  foot.appendChild(txt('Public viewer · Read-only. Edit tournament-data.js in GitHub to update the published tournament.'));
   app.appendChild(foot);
 }
 
